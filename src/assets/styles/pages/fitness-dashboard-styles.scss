@@ -1,0 +1,138 @@
+.fitness-dashboard {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  padding-bottom: 4rem;
+
+  @media (min-width: 768px) {
+    padding-bottom: 0;
+    margin-left: 0;
+  }
+
+  // Desktop Sidebar
+  &__sidebar {
+    display: none;
+
+    @media (min-width: 768px) {
+      display: flex;
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 5rem;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 0;
+      background-color: #2563eb;
+      color: white;
+
+      &-item {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        padding: 0.75rem;
+        width: 100%;
+        transition: all 0.2s;
+
+        &:not(:last-child) {
+          margin-bottom: 2rem;
+        }
+
+        &--active {
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 0.25rem;
+            height: 2rem;
+            background-color: white;
+            border-radius: 0 0.25rem 0.25rem 0;
+          }
+        }
+
+        &:hover {
+          .fitness-dashboard__sidebar-icon {
+            color: white;
+          }
+        }
+      }
+
+      &-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        color: #bfdbfe;
+        transition: color 0.2s;
+      }
+
+      &-label {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+      }
+    }
+  }
+
+  // Mobile Navigation
+  &__mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4rem;
+    background-color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+
+    @media (min-width: 768px) {
+      display: none;
+    }
+
+    &-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 28rem;
+      padding: 0 1.5rem;
+    }
+
+    &-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: none;
+      background: none;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: color 0.2s;
+
+      &--active {
+        color: white;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: -0.5rem;
+          width: 2rem;
+          height: 0.25rem;
+          background-color: #3b82f6;
+          border-radius: 9999px;
+        }
+      }
+
+      &-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-bottom: 0.25rem;
+      }
+
+      &-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+    }
+  }
+}
