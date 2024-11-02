@@ -20,6 +20,7 @@ export interface savedUser {
 	password?: string,
 	gmail?: string
 	imgUrl?: string,
+	weight: number
 }
 export class AuthenticationError extends Error {
 	constructor(message: string) {
@@ -103,6 +104,7 @@ function saveLoggedinUser(user: savedUser) {
 	user = {
 		_id: user._id,
 		username: user.username,
+		weight: user.weight
 	}
 	sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
 	return user
