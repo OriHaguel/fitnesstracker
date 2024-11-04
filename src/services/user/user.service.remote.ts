@@ -13,14 +13,24 @@ export const userService = {
 	update,
 	getLoggedinUser,
 	saveLoggedinUser,
+	getEmptyCredentials
 }
-export interface savedUser {
-	_id: string,
-	username: string,
-	password?: string,
-	gmail?: string
-	imgUrl?: string,
+
+interface workout {
+	sets: number
 	weight: number
+	reps: number
+	date: Date
+}
+
+export interface savedUser {
+	_id?: string
+	username: string
+	password?: string
+	gmail?: string
+	imgUrl?: string
+	weight: number
+	workouts: workout[]
 }
 export class AuthenticationError extends Error {
 	constructor(message: string) {
@@ -44,7 +54,7 @@ function remove(userId: string) {
 }
 
 async function update(_id: string) {
-	const user = await httpService.put(`users/${_id}`, { _id })
+	const user = await httpService.put(`users/${_id}`, _id)
 
 	// When admin updates other user's details, do not update loggedinUser
 	const loggedinUser = getLoggedinUser() // Might not work because its defined in the main service???
@@ -73,7 +83,7 @@ async function signup(userCred: savedUser): Promise<savedUser> {
 	if (!userCred.imgUrl) userCred.imgUrl = 'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
 
 	try {
-		const user = await httpService.post('auth/signup', userCred)
+		const user = await httpService.post('users/signup', userCred)
 		return saveLoggedinUser(user)
 
 	} catch (err) {
@@ -91,7 +101,7 @@ async function logout() {
 function getLoggedinUser(): savedUser | null {
 	try {
 		const user = sessionStorage.getItem(STORAGE_KEY_LOGGEDIN_USER);
-		return user ? JSON.parse(user) as savedUser : null; // Cast to User type
+		return user ? JSON.parse(user) : null; // Cast to User type
 	} catch (error) {
 		console.error('Failed to parse logged-in user data:', error);
 		return null; // Return null on error
@@ -104,8 +114,20 @@ function saveLoggedinUser(user: savedUser) {
 	user = {
 		_id: user._id,
 		username: user.username,
-		weight: user.weight
+		weight: user.weight,
+		workouts: user.workouts
 	}
 	sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
 	return user
+}
+
+function getEmptyCredentials(): savedUser {
+	return {
+		username: '',
+		password: '',
+		gmail: '',
+		imgUrl: '',
+		weight: 0,
+		workouts: []
+	}
 }

@@ -3,34 +3,48 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { userService } from '@/services/user/user.service.remote';
+import { login, signup } from '@/store/actions/user.actions';
 import { Dumbbell, Mail, Lock, ArrowRight, Github, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { savedUser } from '../services/user/user.service.remote';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [credentials, setCredentials] = useState(userService.getEmptyCredentials())
+
   const navigate = useNavigate()
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, isSignup: boolean) => {
     try {
       e.preventDefault();
       setIsLoading(true);
-      // Simulate API call
-      setTimeout(() => setIsLoading(false), 1500);
-      navigate('/dashboard')
+      onLogin(credentials, isSignup)
+      setIsLoading(false)
     } catch (error) {
       console.log("🚀 ~ handleSubmit ~ error:", error)
     }
   };
+  function handleChange({ target }: { target: HTMLInputElement }) {
+    const { name: field, value } = target
+    setCredentials(prevCreds => ({ ...prevCreds, [field]: value }))
+  }
 
+  async function onLogin(credentials: savedUser, isSignup: boolean) {
+    const method = isSignup ? signup : login
+    await method(credentials)
+    navigate('/dashboard')
+
+  }
   const formFields = {
     login: [
-      { id: "email", label: "Email", type: "email", placeholder: "Enter your email", icon: <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
-      { id: "password", label: "Password", type: "password", placeholder: "Enter your password", icon: <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
+      { id: "gmail", label: "gmail", name: 'gmail', type: "gmail", placeholder: "Enter your email", icon: <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
+      { id: "password", label: "Password", name: 'password', type: "password", placeholder: "Enter your password", icon: <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
     ],
     signup: [
-      { id: "signup-username", label: "Username", type: "text", placeholder: "Choose a username", icon: <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
-      { id: "signup-email", label: "Email", type: "email", placeholder: "Enter your email", icon: <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
-      { id: "signup-password", label: "Password", type: "password", placeholder: "Create a password", icon: <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
+      { id: "signup-username", label: "Username", name: 'username', type: "text", placeholder: "Choose a username", icon: <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
+      { id: "signup-gmail", label: "gmail", name: 'gmail', type: "gmail", placeholder: "Enter your email", icon: <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
+      { id: "signup-password", label: "Password", name: 'password', type: "password", placeholder: "Create a password", icon: <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
     ],
   };
 
@@ -40,15 +54,18 @@ const AuthPage = () => {
     type: string;
     placeholder: string;
     icon: React.ReactNode;
+    name: string
   }
 
   const renderFormFields = (fields: Field[]) => (
-    fields.map(({ id, label, type, placeholder, icon }) => (
+    fields.map(({ id, label, type, placeholder, icon, name }) => (
       <div key={id} className="space-y-1.5">
         <Label htmlFor={id}>{label}</Label>
         <div className="relative">
           {icon}
           <Input
+            name={name}
+            onChange={handleChange}
             id={id}
             type={type}
             placeholder={placeholder}
@@ -86,9 +103,9 @@ const AuthPage = () => {
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
               </TabsList>
 
-              <div className="h-[280px]"> {/* Fixed height container */}
+              <div className="h-[280px]">
                 <TabsContent value="login" className="h-full mt-0">
-                  <form onSubmit={handleSubmit} className="h-full flex flex-col">
+                  <form onSubmit={(ev) => handleSubmit(ev, false)} className="h-full flex flex-col">
                     <div className="space-y-4 flex-grow">
                       {renderFormFields(formFields.login)}
                     </div>
@@ -112,7 +129,7 @@ const AuthPage = () => {
                 </TabsContent>
 
                 <TabsContent value="signup" className="h-full mt-0">
-                  <form onSubmit={handleSubmit} className="h-full flex flex-col">
+                  <form onSubmit={(ev) => handleSubmit(ev, true)} className="h-full flex flex-col">
                     <div className="space-y-4 flex-grow">
                       {renderFormFields(formFields.signup)}
                     </div>

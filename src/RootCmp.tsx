@@ -1,11 +1,11 @@
 import { Routes, Route, useLocation } from 'react-router'
-import { Home } from './pages/Home'
 import FitnessDashboard from './pages/fitness-dashboard'
 import Calendar from './pages/Calendar'
 import { NavBar } from './cmps/NavBar'
 import AuthPage from './pages/fitness-auth-page'
 import WorkoutListPage from './pages/workout-list-page'
 import WorkoutEditPage from './pages/workout-edit-page'
+import Home from './pages/Home'
 
 export function RootCmp() {
     const location = useLocation();
@@ -23,6 +23,7 @@ export function RootCmp() {
                     <Route path='/auth' element={<AuthPage />} />
                     <Route path='/workouts' element={<WorkoutListPage />} />
                     <Route path='/workouts/:id' element={<WorkoutEditPage />} />
+                    <Route path='/workouts/new' element={<WorkoutEditPage />} />
                 </Routes>
             </main>
         </div>

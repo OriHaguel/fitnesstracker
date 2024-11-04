@@ -1,9 +1,11 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Trash2, Edit2 } from 'lucide-react';
-import { 
+import { ArrowLeft, Trash2, Edit2, Calculator, ArrowRight, Save } from 'lucide-react';
+import {
   Card,
   CardContent,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +17,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { WorkoutDetail } from '@/cmps/WorkoutDetail';
+export interface WorkoutDetailProps {
+  workout: Workout;
+  setWorkout: React.Dispatch<React.SetStateAction<Workout>>;
+}
 interface Exercise {
   id: number;
   name: string;
@@ -24,7 +37,6 @@ interface Exercise {
   weight?: string;
   duration?: string;
 }
-
 interface Workout {
   id: number;
   name: string;
@@ -32,7 +44,6 @@ interface Workout {
   duration: string;
   exercises: Exercise[];
 }
-
 interface NewExercise {
   name: string;
   sets: string;
@@ -44,8 +55,8 @@ interface NewExercise {
 const WorkoutEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  
-  const [workout, setWorkout] = React.useState<Workout>({
+
+  const [workout, setWorkout] = useState<Workout>({
     id: id === 'new' ? Date.now() : parseInt(id || '0'),
     name: '',
     type: '',
@@ -53,7 +64,7 @@ const WorkoutEditPage: React.FC = () => {
     exercises: []
   });
 
-  const [newExercise, setNewExercise] = React.useState<NewExercise>({
+  const [newExercise, setNewExercise] = useState<NewExercise>({
     name: '',
     sets: '',
     reps: '',
@@ -62,15 +73,15 @@ const WorkoutEditPage: React.FC = () => {
   });
 
   // Modal state
-  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
-  const [editingExercise, setEditingExercise] = React.useState<Exercise | null>(null);
-  const [editForm, setEditForm] = React.useState({
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
+  const [editForm, setEditForm] = useState({
     sets: '',
     reps: '',
     weight: ''
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (id && id !== 'new') {
       setWorkout({
         id: 1,
@@ -154,53 +165,61 @@ const WorkoutEditPage: React.FC = () => {
     });
   };
 
+  const [calcInput, setCalcInput] = useState({
+    currentWeight: '',
+    currentReps: '',
+    targetReps: '',
+    selectedExerciseId: ''
+  });
+  const [calculatedWeight, setCalculatedWeight] = useState<number | null>(null);
+
+  const calculateWeight = () => {
+    const weight = parseFloat(calcInput.currentWeight);
+    const reps = parseInt(calcInput.currentReps);
+    const targetReps = parseInt(calcInput.targetReps);
+
+    if (weight && reps && targetReps) {
+      const oneRM = weight * (1 + reps / 30);
+      const targetWeight = oneRM / (1 + targetReps / 30);
+      setCalculatedWeight(Math.round(targetWeight * 10) / 10);
+    }
+  };
+
+  const applyWeightToExercise = () => {
+    if (!calculatedWeight || !calcInput.selectedExerciseId) return;
+
+    const updatedExercises = workout.exercises.map(exercise => {
+      if (exercise.id === parseInt(calcInput.selectedExerciseId)) {
+        return {
+          ...exercise,
+          weight: `${calculatedWeight} kg`
+        };
+      }
+      return exercise;
+    });
+
+    setWorkout({
+      ...workout,
+      exercises: updatedExercises
+    });
+
+    setCalcInput(prev => ({
+      ...prev,
+      selectedExerciseId: ''
+    }));
+  };
+
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="outline" onClick={() => navigate('/')}>
+        <Button variant="outline" onClick={() => navigate('/workouts')}>
           <ArrowLeft size={16} />
         </Button>
         <h1 className="text-2xl font-bold">
           {id === 'new' ? 'Create Workout' : 'Edit Workout'}
         </h1>
       </div>
-
-      <Card className="mb-6">
-        <CardContent className="p-4 space-y-4">
-          <input
-            type="text"
-            placeholder="Workout Name"
-            className="w-full p-2 border rounded"
-            value={workout.name}
-            onChange={(e) => setWorkout({
-              ...workout,
-              name: e.target.value
-            })}
-          />
-          <div className="flex gap-4">
-            <input
-              type="text"
-              placeholder="Type"
-              className="w-1/2 p-2 border rounded"
-              value={workout.type}
-              onChange={(e) => setWorkout({
-                ...workout,
-                type: e.target.value
-              })}
-            />
-            <input
-              type="text"
-              placeholder="Duration"
-              className="w-1/2 p-2 border rounded"
-              value={workout.duration}
-              onChange={(e) => setWorkout({
-                ...workout,
-                duration: e.target.value
-              })}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <WorkoutDetail workout={workout} setWorkout={setWorkout} />
 
       <div className="mb-6">
         <h2 className="text-xl font-bold mb-4">Exercises</h2>
@@ -278,7 +297,7 @@ const WorkoutEditPage: React.FC = () => {
                         weight: e.target.value
                       })}
                     />
-                    <Button 
+                    <Button
                       className="w-1/4"
                       onClick={addExercise}
                     >
@@ -292,14 +311,112 @@ const WorkoutEditPage: React.FC = () => {
         </Card>
       </div>
 
-      <div className="flex justify-end">
-        <Button 
-          className="flex items-center gap-2"
-          onClick={handleSave}
-        >
-          <Save size={16} />
-          Save Workout
-        </Button>
+      <div className="mb-6">
+        <h2 className="text-xl font-bold mb-4">Weight Calculator</h2>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Calculate Weight for Different Reps</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="currentWeight">Current Weight (kg)</Label>
+                  <Input
+                    id="currentWeight"
+                    type="number"
+                    placeholder="60"
+                    value={calcInput.currentWeight}
+                    onChange={(e) => setCalcInput(prev => ({
+                      ...prev,
+                      currentWeight: e.target.value
+                    }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="currentReps">Current Reps</Label>
+                  <Input
+                    id="currentReps"
+                    type="number"
+                    placeholder="10"
+                    value={calcInput.currentReps}
+                    onChange={(e) => setCalcInput(prev => ({
+                      ...prev,
+                      currentReps: e.target.value
+                    }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="targetReps">Target Reps</Label>
+                  <Input
+                    id="targetReps"
+                    type="number"
+                    placeholder="5"
+                    value={calcInput.targetReps}
+                    onChange={(e) => setCalcInput(prev => ({
+                      ...prev,
+                      targetReps: e.target.value
+                    }))}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <Button
+                  onClick={calculateWeight}
+                  className="flex items-center gap-2"
+                >
+                  <Calculator size={16} />
+                  Calculate Weight
+                </Button>
+
+                {calculatedWeight && (
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">Suggested weight for {calcInput.targetReps} reps:</p>
+                    <p className="text-2xl font-bold">{calculatedWeight} kg</p>
+                  </div>
+                )}
+              </div>
+
+              {calculatedWeight && workout.exercises.length > 0 && (
+                <div className="border-t pt-4 mt-4">
+                  <Label>Apply weight to exercise</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Select
+                      value={calcInput.selectedExerciseId}
+                      onValueChange={(value) => setCalcInput(prev => ({
+                        ...prev,
+                        selectedExerciseId: value
+                      }))}
+                    >
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder="Select exercise" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {workout.exercises.map(exercise => (
+                          <SelectItem
+                            key={exercise.id}
+                            value={exercise.id.toString()}
+                          >
+                            {exercise.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      onClick={applyWeightToExercise}
+                      disabled={!calcInput.selectedExerciseId}
+                      className="flex items-center gap-2"
+                    >
+                      <ArrowRight size={16} />
+                      Apply Weight
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
@@ -352,8 +469,16 @@ const WorkoutEditPage: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <Button
+        className="flex items-center gap-2"
+        onClick={handleSave}
+      >
+        <Save size={16} />
+        Save Workout
+      </Button>
     </div>
   );
 };
 
 export default WorkoutEditPage;
+

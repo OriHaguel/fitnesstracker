@@ -37,6 +37,7 @@ export async function signup(credentials: savedUser) {
             type: SET_USER,
             user
         })
+
         // socketService.login(user._id)
         return user
     } catch (err) {

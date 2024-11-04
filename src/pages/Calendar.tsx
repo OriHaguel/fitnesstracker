@@ -245,8 +245,7 @@ export default function Calendar() {
         </div>
         <Button className="bg-blue-600 hover:bg-blue-700 w-full md:w-auto">
           <Plus className="h-4 w-4 mr-2" />
-          Create Event
-        </Button>
+          Add workout        </Button>
       </div>
 
       <div className="grid grid-cols-7 border-collapse rounded-lg overflow-hidden border border-gray-200">

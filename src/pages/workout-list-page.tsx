@@ -47,7 +47,7 @@ const WorkoutListPage = () => {
         <h1 className="text-2xl font-bold">My Workouts</h1>
         <Button
           className="flex items-center gap-2"
-          onClick={() => navigate('/workout/new')}
+          onClick={() => navigate('/workouts/new')}
         >
           <Plus size={16} />
           New Workout
