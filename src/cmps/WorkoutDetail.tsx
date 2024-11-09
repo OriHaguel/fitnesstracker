@@ -2,8 +2,11 @@ import {
     Card,
     CardContent,
 } from "@/components/ui/card";
-import { WorkoutDetailProps } from '../pages/workout-edit-page'
-
+import { Workout } from '../services/user/user.service.remote';
+interface WorkoutDetailProps {
+    workout: Workout;
+    setWorkout: React.Dispatch<React.SetStateAction<Workout>>;
+}
 export function WorkoutDetail({ workout, setWorkout }: WorkoutDetailProps) {
     return (
         <Card className="mb-6">
@@ -27,16 +30,6 @@ export function WorkoutDetail({ workout, setWorkout }: WorkoutDetailProps) {
                         onChange={(e) => setWorkout({
                             ...workout,
                             type: e.target.value
-                        })}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Duration"
-                        className="w-1/2 p-2 border rounded"
-                        value={workout.duration}
-                        onChange={(e) => setWorkout({
-                            ...workout,
-                            duration: e.target.value
                         })}
                     />
                 </div>

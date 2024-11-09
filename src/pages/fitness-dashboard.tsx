@@ -2,8 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts';
-
 import { Camera } from 'lucide-react';
+import { useSelector } from 'react-redux';
+
 const Icon = ({ name }: { name: string }) => {
   return <Camera className={`h-4 w-4 ${name === 'Trophy' ? 'text-yellow-400' :
     name === 'Activity' ? 'text-red-400' :
@@ -12,6 +13,7 @@ const Icon = ({ name }: { name: string }) => {
 };
 
 const FitnessDashboard = () => {
+  const user = useSelector((state: any) => state.userModule.user);
 
 
   const workoutData = [
@@ -29,15 +31,24 @@ const FitnessDashboard = () => {
     { name: 'Week 4', calories: 2800, workouts: 7 },
   ];
 
-  const weightData = [
-    { date: 'Mon', weight: 75 },
-    { date: 'Tue', weight: 74.8 },
-    { date: 'Wed', weight: 74.5 },
-    { date: 'Thu', weight: 74.3 },
-    { date: 'Fri', weight: 74.2 },
-  ];
+  // const weightData = [
+  //   { date: 'Mon', weight: 85 },
+  //   { date: 'Tue', weight: 75 },
+  //   { date: 'Wed', weight: 74.9 },
+  //   { date: 'Thu', weight: 74.8 },
+  //   { date: 'Fri', weight: 74.7 },
+  //   { date: 'Fri', weight: 74.6 },
+  //   { date: 'Fri', weight: 74.5 },
+  //   { date: 'Fri', weight: 74.4 },
+  //   { date: 'Fri', weight: 74.3 },
+  //   { date: 'Fri', weight: 74.2 },
+  // ];
 
-
+  function getFormattedDate(): string {
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: '2-digit', month: 'long' };
+    const today = new Date();
+    return today.toLocaleDateString('en-US', options);
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -49,8 +60,8 @@ const FitnessDashboard = () => {
         {/* Rest of the component remains the same */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-xl font-bold">Welcome back, Alex!</h1>
-            <p className="text-sm text-gray-600">Friday, 25 October</p>
+            <h1 className="text-xl font-bold">{`Welcome back, ${user.username}!`}</h1>
+            <p className="text-sm text-gray-600">{getFormattedDate()}</p>
           </div>
           <div className="flex items-center space-x-3">
             <Button variant="outline" size="sm">
@@ -170,10 +181,11 @@ const FitnessDashboard = () => {
             <CardContent className="p-4 pt-0">
               <div className="h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={weightData}>
+                  <LineChart data={user.weight}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                     <XAxis dataKey="date" fontSize={12} />
-                    <YAxis fontSize={12} />
+                    <YAxis fontSize={12} domain={[user.weight[0] + 10, user.weight[user.weight.length - 1] - 10]} />
+                    {/* <YAxis fontSize={12} domain={[user.weight[0] + 10, user.weight[user.weight.length - 1] - 10]} /> */}
                     <Line type="monotone" dataKey="weight" stroke="#8884d8" />
                   </LineChart>
                 </ResponsiveContainer>

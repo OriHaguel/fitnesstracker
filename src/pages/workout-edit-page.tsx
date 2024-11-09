@@ -25,76 +25,74 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { WorkoutDetail } from '@/cmps/WorkoutDetail';
-export interface WorkoutDetailProps {
-  workout: Workout;
-  setWorkout: React.Dispatch<React.SetStateAction<Workout>>;
+import { useSelector } from 'react-redux';
+import { Exercise, Workout } from '../services/user/user.service.remote';
+
+
+interface RootState {
+  userModule: {
+    user: {
+      workouts: Workout[];
+    };
+  };
 }
-interface Exercise {
-  id: number;
-  name: string;
-  sets: number;
-  reps?: number;
-  weight?: string;
-  duration?: string;
-}
-interface Workout {
-  id: number;
-  name: string;
-  type: string;
-  duration: string;
-  exercises: Exercise[];
-}
-interface NewExercise {
-  name: string;
+
+interface EditForm {
   sets: string;
   reps: string;
   weight: string;
-  duration: string;
+}
+
+interface CalcInput {
+  currentWeight: string;
+  currentReps: string;
+  targetReps: string;
+  selectedExerciseId: string;
 }
 
 const WorkoutEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const user = useSelector((state: RootState) => state.userModule.user);
 
   const [workout, setWorkout] = useState<Workout>({
-    id: id === 'new' ? Date.now() : parseInt(id || '0'),
+    _id: '',
     name: '',
     type: '',
-    duration: '',
-    exercises: []
+    exercise: []
   });
 
-  const [newExercise, setNewExercise] = useState<NewExercise>({
+  const [newExercise, setNewExercise] = useState<Exercise>({
     name: '',
-    sets: '',
-    reps: '',
-    weight: '',
-    duration: ''
+    sets: 0,
+    reps: 0,
+    weight: 0,
   });
 
-  // Modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
-  const [editForm, setEditForm] = useState({
-    sets: '',
-    reps: '',
-    weight: ''
+  const [editForm, setEditForm] = useState<EditForm>({
+    sets: '0',
+    reps: '0',
+    weight: '0'
   });
 
+  const [calcInput, setCalcInput] = useState<CalcInput>({
+    currentWeight: '',
+    currentReps: '',
+    targetReps: '',
+    selectedExerciseId: ''
+  });
+  const [calculatedWeight, setCalculatedWeight] = useState<number | null>(null);
+
   useEffect(() => {
-    if (id && id !== 'new') {
-      setWorkout({
-        id: 1,
-        name: 'Upper Body Strength',
-        type: 'Strength',
-        duration: '45 min',
-        exercises: [
-          { id: 1, name: 'Bench Press', sets: 3, reps: 10, weight: '135 lbs' },
-          { id: 2, name: 'Shoulder Press', sets: 3, reps: 12, weight: '95 lbs' },
-        ]
-      });
+    if (id && user) {
+      const foundWorkout = user.workouts.find((w) => w._id === id);
+      if (foundWorkout) {
+        setWorkout(foundWorkout);
+      }
     }
-  }, [id]);
+  }, [id, user]);
 
   const handleSave = () => {
     navigate('/');
@@ -104,8 +102,8 @@ const WorkoutEditPage: React.FC = () => {
     setEditingExercise(exercise);
     setEditForm({
       sets: exercise.sets.toString(),
-      reps: exercise.reps?.toString() || '',
-      weight: exercise.weight || ''
+      reps: exercise.reps.toString(),
+      weight: exercise.weight.toString()
     });
     setIsEditModalOpen(true);
   };
@@ -113,13 +111,13 @@ const WorkoutEditPage: React.FC = () => {
   const handleEditSave = () => {
     if (!editingExercise) return;
 
-    const updatedExercises = workout.exercises.map(exercise => {
-      if (exercise.id === editingExercise.id) {
+    const updatedExercises = workout.exercise.map(exercise => {
+      if (exercise.name === editingExercise.name) {
         return {
           ...exercise,
-          sets: parseInt(editForm.sets),
-          reps: editForm.reps ? parseInt(editForm.reps) : undefined,
-          weight: editForm.weight || undefined
+          sets: parseInt(editForm.sets) || 0,
+          reps: parseInt(editForm.reps) || 0,
+          weight: parseFloat(editForm.weight) || 0
         };
       }
       return exercise;
@@ -127,51 +125,38 @@ const WorkoutEditPage: React.FC = () => {
 
     setWorkout({
       ...workout,
-      exercises: updatedExercises
+      exercise: updatedExercises
     });
     setIsEditModalOpen(false);
   };
 
   const addExercise = () => {
     if (newExercise.name && newExercise.sets) {
-      const exercise: Exercise = {
-        id: workout.exercises.length + 1,
-        name: newExercise.name,
-        sets: parseInt(newExercise.sets),
-        reps: newExercise.reps ? parseInt(newExercise.reps) : undefined,
-        weight: newExercise.weight || undefined,
-        duration: newExercise.duration || undefined
-      };
-
       setWorkout({
         ...workout,
-        exercises: [...workout.exercises, exercise]
+        exercise: [...workout.exercise, {
+          name: newExercise.name,
+          sets: newExercise.sets,
+          reps: newExercise.reps,
+          weight: newExercise.weight
+        }]
       });
 
       setNewExercise({
         name: '',
-        sets: '',
-        reps: '',
-        weight: '',
-        duration: ''
+        sets: 0,
+        reps: 0,
+        weight: 0
       });
     }
   };
 
-  const removeExercise = (exerciseId: number) => {
+  const removeExercise = (exerciseName: string) => {
     setWorkout({
       ...workout,
-      exercises: workout.exercises.filter(e => e.id !== exerciseId)
+      exercise: workout.exercise.filter(e => e.name !== exerciseName)
     });
   };
-
-  const [calcInput, setCalcInput] = useState({
-    currentWeight: '',
-    currentReps: '',
-    targetReps: '',
-    selectedExerciseId: ''
-  });
-  const [calculatedWeight, setCalculatedWeight] = useState<number | null>(null);
 
   const calculateWeight = () => {
     const weight = parseFloat(calcInput.currentWeight);
@@ -188,11 +173,11 @@ const WorkoutEditPage: React.FC = () => {
   const applyWeightToExercise = () => {
     if (!calculatedWeight || !calcInput.selectedExerciseId) return;
 
-    const updatedExercises = workout.exercises.map(exercise => {
-      if (exercise.id === parseInt(calcInput.selectedExerciseId)) {
+    const updatedExercises = workout.exercise.map(exercise => {
+      if (exercise.name === calcInput.selectedExerciseId) {
         return {
           ...exercise,
-          weight: `${calculatedWeight} kg`
+          weight: calculatedWeight
         };
       }
       return exercise;
@@ -200,7 +185,7 @@ const WorkoutEditPage: React.FC = () => {
 
     setWorkout({
       ...workout,
-      exercises: updatedExercises
+      exercise: updatedExercises
     });
 
     setCalcInput(prev => ({
@@ -208,6 +193,8 @@ const WorkoutEditPage: React.FC = () => {
       selectedExerciseId: ''
     }));
   };
+
+  if (!user) return null;
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -219,6 +206,7 @@ const WorkoutEditPage: React.FC = () => {
           {id === 'new' ? 'Create Workout' : 'Edit Workout'}
         </h1>
       </div>
+
       <WorkoutDetail workout={workout} setWorkout={setWorkout} />
 
       <div className="mb-6">
@@ -226,13 +214,12 @@ const WorkoutEditPage: React.FC = () => {
         <Card>
           <CardContent className="p-4">
             <div className="space-y-4">
-              {workout.exercises.map((exercise) => (
-                <div key={exercise.id} className="flex items-center gap-4 p-4 border rounded">
+              {workout.exercise.map((exercise) => (
+                <div key={exercise.name} className="flex items-center gap-4 p-4 border rounded">
                   <div className="flex-1">
                     <h3 className="font-bold">{exercise.name}</h3>
                     <p className="text-sm text-gray-600">
-                      {exercise.sets} sets × {exercise.reps || exercise.duration}
-                      {exercise.weight && ` @ ${exercise.weight}`}
+                      {exercise.sets} sets × {exercise.reps} reps @ {exercise.weight}kg
                     </p>
                   </div>
                   <Button
@@ -246,7 +233,7 @@ const WorkoutEditPage: React.FC = () => {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => removeExercise(exercise.id)}
+                    onClick={() => removeExercise(exercise.name)}
                   >
                     <Trash2 size={16} />
                   </Button>
@@ -256,49 +243,49 @@ const WorkoutEditPage: React.FC = () => {
               <div className="border-t pt-4">
                 <h3 className="font-bold mb-2">Add New Exercise</h3>
                 <div className="space-y-2">
-                  <input
+                  <Input
                     type="text"
                     placeholder="Exercise Name"
-                    className="w-full p-2 border rounded"
                     value={newExercise.name}
                     onChange={(e) => setNewExercise({
                       ...newExercise,
                       name: e.target.value
                     })}
+                    className="w-full"
                   />
                   <div className="flex gap-2">
-                    <input
+                    <Input
                       type="number"
                       placeholder="Sets"
-                      className="w-1/4 p-2 border rounded"
-                      value={newExercise.sets}
+                      value={newExercise.sets || ''}
                       onChange={(e) => setNewExercise({
                         ...newExercise,
-                        sets: e.target.value
+                        sets: parseInt(e.target.value) || 0
                       })}
+                      className="w-1/3"
                     />
-                    <input
-                      type="text"
-                      placeholder="Reps/Duration"
-                      className="w-1/4 p-2 border rounded"
-                      value={newExercise.reps}
+                    <Input
+                      type="number"
+                      placeholder="Reps"
+                      value={newExercise.reps || ''}
                       onChange={(e) => setNewExercise({
                         ...newExercise,
-                        reps: e.target.value
+                        reps: parseInt(e.target.value) || 0
                       })}
+                      className="w-1/3"
                     />
-                    <input
-                      type="text"
-                      placeholder="Weight (optional)"
-                      className="w-1/4 p-2 border rounded"
-                      value={newExercise.weight}
+                    <Input
+                      type="number"
+                      placeholder="Weight (kg)"
+                      value={newExercise.weight || ''}
                       onChange={(e) => setNewExercise({
                         ...newExercise,
-                        weight: e.target.value
+                        weight: parseFloat(e.target.value) || 0
                       })}
+                      className="w-1/3"
                     />
                     <Button
-                      className="w-1/4"
+                      className="w-1/3"
                       onClick={addExercise}
                     >
                       Add Exercise
@@ -378,7 +365,7 @@ const WorkoutEditPage: React.FC = () => {
                 )}
               </div>
 
-              {calculatedWeight && workout.exercises.length > 0 && (
+              {calculatedWeight && workout.exercise.length > 0 && (
                 <div className="border-t pt-4 mt-4">
                   <Label>Apply weight to exercise</Label>
                   <div className="flex gap-2 mt-2">
@@ -393,10 +380,10 @@ const WorkoutEditPage: React.FC = () => {
                         <SelectValue placeholder="Select exercise" />
                       </SelectTrigger>
                       <SelectContent>
-                        {workout.exercises.map(exercise => (
+                        {workout.exercise.map(exercise => (
                           <SelectItem
-                            key={exercise.id}
-                            value={exercise.id.toString()}
+                            key={exercise.name}
+                            value={exercise.name}
                           >
                             {exercise.name}
                           </SelectItem>
@@ -455,6 +442,7 @@ const WorkoutEditPage: React.FC = () => {
               </Label>
               <Input
                 id="weight"
+                type="number"
                 value={editForm.weight}
                 onChange={(e) => setEditForm({ ...editForm, weight: e.target.value })}
                 className="col-span-3"
@@ -469,6 +457,7 @@ const WorkoutEditPage: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
       <Button
         className="flex items-center gap-2"
         onClick={handleSave}
@@ -481,4 +470,3 @@ const WorkoutEditPage: React.FC = () => {
 };
 
 export default WorkoutEditPage;
-

@@ -8,7 +8,7 @@ import { login, signup } from '@/store/actions/user.actions';
 import { Dumbbell, Mail, Lock, ArrowRight, Github, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { savedUser } from '../services/user/user.service.remote';
+import { SavedUser } from '../services/user/user.service.remote';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +30,7 @@ const AuthPage = () => {
     setCredentials(prevCreds => ({ ...prevCreds, [field]: value }))
   }
 
-  async function onLogin(credentials: savedUser, isSignup: boolean) {
+  async function onLogin(credentials: SavedUser, isSignup: boolean) {
     const method = isSignup ? signup : login
     await method(credentials)
     navigate('/dashboard')

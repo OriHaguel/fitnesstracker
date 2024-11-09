@@ -2,7 +2,7 @@
 import { store } from '../store'
 
 import { SET_USER, SET_USERS } from '../reducers/user.reducer'
-import { userService, savedUser } from '@/services/user/user.service.remote'
+import { userService, SavedUser } from '@/services/user/user.service.remote'
 
 export async function loadUsers() {
     try {
@@ -16,7 +16,7 @@ export async function loadUsers() {
 
 
 
-export async function login(credentials: savedUser) {
+export async function login(credentials: SavedUser) {
     try {
         const user = await userService.login(credentials);
         store.dispatch({
@@ -30,7 +30,7 @@ export async function login(credentials: savedUser) {
     }
 }
 
-export async function signup(credentials: savedUser) {
+export async function signup(credentials: SavedUser) {
     try {
         const user = await userService.signup(credentials)
         store.dispatch({

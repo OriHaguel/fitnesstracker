@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, AxiosRequestConfig, AxiosError } from 'axios';
-import { savedUser } from './user/user.service.remote'
+import { SavedUser } from './user/user.service.remote'
 const BASE_URL = process.env.NODE_ENV === 'production'
     ? '/api/'
     : '//localhost:3000/';
@@ -18,7 +18,7 @@ export const httpService = {
     get<T = any>(endpoint: string, data?: any): Promise<T> {
         return ajax<T>(endpoint, 'GET', data);
     },
-    post<T = any>(endpoint: string, data?: savedUser): Promise<T> {
+    post<T = any>(endpoint: string, data?: SavedUser): Promise<T> {
         return ajax<T>(endpoint, 'POST', data);
     },
     put<T = any>(endpoint: string, data?: string): Promise<T> {

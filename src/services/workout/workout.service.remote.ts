@@ -3,17 +3,12 @@ import { httpService } from '../../services/http.service'
 
 const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
 
-export const userService = {
-	login,
-	logout,
-	signup,
-	getUsers,
+export const workoutService = {
+	getWorkouts,
 	getById,
 	remove,
 	update,
-	getLoggedinUser,
-	saveLoggedinUser,
-	getEmptyCredentials
+
 }
 
 export interface Exercise {
@@ -28,19 +23,9 @@ export interface Workout {
 	type: string
 	exercise: Exercise[]
 }
-interface Weight {
-	weight: number
-	date: Date
-}
 
-export interface SavedUser {
-	_id?: string
-	username: string
-	password?: string
-	gmail?: string
-	weight: Weight[]
-	workouts: Workout[]
-}
+
+
 export class AuthenticationError extends Error {
 	constructor(message: string) {
 		super(message)
@@ -48,7 +33,7 @@ export class AuthenticationError extends Error {
 	}
 }
 
-function getUsers() {
+function getWorkouts() {
 	console.log('yooo')
 	return httpService.get(`users`)
 }

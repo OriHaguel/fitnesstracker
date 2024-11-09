@@ -1,5 +1,5 @@
 import { userService } from "@/services/user/user.service.remote";
-import { savedUser } from "@/services/user/user.service.remote";
+import { SavedUser } from "@/services/user/user.service.remote";
 
 
 // Action Types
@@ -13,19 +13,19 @@ export const SET_SCORE = 'SET_SCORE' as const;
 
 // State Type
 interface UserState {
-    user: savedUser | null;
-    users: savedUser[];
+    user: SavedUser | null;
+    users: SavedUser[];
 }
 
 // Action Types
 interface SetUserAction {
     type: typeof SET_USER;
-    user: savedUser | null;
+    user: SavedUser | null;
 }
 
 interface SetUsersAction {
     type: typeof SET_USERS;
-    users: savedUser[];
+    users: SavedUser[];
 }
 
 interface SetScoreAction {
