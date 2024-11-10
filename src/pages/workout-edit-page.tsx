@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { WorkoutDetail } from '@/cmps/WorkoutDetail';
 import { useSelector } from 'react-redux';
-import { Exercise, Workout } from '../services/user/user.service.remote';
+import { Exercise, userService, Workout } from '../services/user/user.service.remote';
 
 
 interface RootState {
@@ -38,9 +38,9 @@ interface RootState {
 }
 
 interface EditForm {
-  sets: string;
-  reps: string;
-  weight: string;
+  sets: number;
+  reps: number;
+  weight: number;
 }
 
 interface CalcInput {
@@ -54,6 +54,7 @@ const WorkoutEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const user = useSelector((state: RootState) => state.userModule.user);
+  console.log("🚀 ~ user:", user)
 
   const [workout, setWorkout] = useState<Workout>({
     _id: '',
@@ -71,10 +72,11 @@ const WorkoutEditPage: React.FC = () => {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
-  const [editForm, setEditForm] = useState<EditForm>({
-    sets: '0',
-    reps: '0',
-    weight: '0'
+  const [editForm, setEditForm] = useState<Exercise>({
+    sets: 0,
+    reps: 0,
+    weight: 0,
+    name: ''
   });
 
   const [calcInput, setCalcInput] = useState<CalcInput>({
@@ -101,33 +103,42 @@ const WorkoutEditPage: React.FC = () => {
   const openEditModal = (exercise: Exercise) => {
     setEditingExercise(exercise);
     setEditForm({
-      sets: exercise.sets.toString(),
-      reps: exercise.reps.toString(),
-      weight: exercise.weight.toString()
+      sets: exercise.sets ? (exercise.sets) : 0,
+      reps: exercise.reps ? (exercise.reps) : 0,
+      weight: exercise.weight ? (exercise.weight) : 0,
+      name: exercise.name ? (exercise.name) : ''
     });
     setIsEditModalOpen(true);
   };
 
-  const handleEditSave = () => {
-    if (!editingExercise) return;
+  const handleEditSave = async () => {
 
-    const updatedExercises = workout.exercise.map(exercise => {
-      if (exercise.name === editingExercise.name) {
-        return {
-          ...exercise,
-          sets: parseInt(editForm.sets) || 0,
-          reps: parseInt(editForm.reps) || 0,
-          weight: parseFloat(editForm.weight) || 0
-        };
-      }
-      return exercise;
-    });
+    try {
 
-    setWorkout({
-      ...workout,
-      exercise: updatedExercises
-    });
-    setIsEditModalOpen(false);
+      if (!editForm) return;
+      userService.update(id!, editForm)
+      setIsEditModalOpen(false);
+
+    } catch (error) {
+      console.log("🚀 ~ handleEditSave ~ error:", error)
+
+    }
+    // const updatedExercises = workout.exercise.map(exercise => {
+    //   if (exercise.name === editingExercise.name) {
+    //     return {
+    //       ...exercise,
+    //       sets: editForm.sets || 0,
+    //       reps: editForm.reps || 0,
+    //       weight: editForm.weight || 0
+    //     };
+    //   }
+    //   return exercise;
+    // });
+
+    // setWorkout({
+    //   ...workout,
+    //   exercise: updatedExercises
+    // });
   };
 
   const addExercise = () => {
@@ -420,7 +431,7 @@ const WorkoutEditPage: React.FC = () => {
                 id="sets"
                 type="number"
                 value={editForm.sets}
-                onChange={(e) => setEditForm({ ...editForm, sets: e.target.value })}
+                onChange={(e) => setEditForm({ ...editForm, sets: +e.target.value })}
                 className="col-span-3"
               />
             </div>
@@ -432,7 +443,7 @@ const WorkoutEditPage: React.FC = () => {
                 id="reps"
                 type="number"
                 value={editForm.reps}
-                onChange={(e) => setEditForm({ ...editForm, reps: e.target.value })}
+                onChange={(e) => setEditForm({ ...editForm, reps: +e.target.value })}
                 className="col-span-3"
               />
             </div>
@@ -444,7 +455,7 @@ const WorkoutEditPage: React.FC = () => {
                 id="weight"
                 type="number"
                 value={editForm.weight}
-                onChange={(e) => setEditForm({ ...editForm, weight: e.target.value })}
+                onChange={(e) => setEditForm({ ...editForm, weight: +e.target.value })}
                 className="col-span-3"
               />
             </div>
@@ -453,6 +464,7 @@ const WorkoutEditPage: React.FC = () => {
             <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
               Cancel
             </Button>
+            {/* <Button onClick={() => userService.update(id!, { name: 'Bench Press', reps: 10 })}>Save Changes</Button> */}
             <Button onClick={handleEditSave}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>

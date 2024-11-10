@@ -17,9 +17,9 @@ export const userService = {
 }
 
 export interface Exercise {
-	sets: number
-	weight: number
-	reps: number
+	sets?: number
+	weight?: number
+	reps?: number
 	name: string
 }
 export interface Workout {
@@ -62,12 +62,13 @@ function remove(userId: string) {
 	return httpService.delete(`users/${userId}`)
 }
 
-async function update(_id: string) {
-	const user = await httpService.put(`users/${_id}`, _id)
+async function update(_id: string, exercise: Exercise) {
+	const loggedinUser = getLoggedinUser() // Might not work because its defined in the main service???
+	const user = await httpService.put(`users/${loggedinUser?._id}/workouts/${_id}/exercise`, exercise)
 
 	// When admin updates other user's details, do not update loggedinUser
-	const loggedinUser = getLoggedinUser() // Might not work because its defined in the main service???
 	if (loggedinUser?._id === user._id) saveLoggedinUser(user)
+	console.log("🚀 ~ update ~ user:", user)
 
 	return user
 }
