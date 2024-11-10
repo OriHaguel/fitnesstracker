@@ -27,6 +27,7 @@ import {
 import { WorkoutDetail } from '@/cmps/WorkoutDetail';
 import { useSelector } from 'react-redux';
 import { Exercise, userService, Workout } from '../services/user/user.service.remote';
+import { editExersice } from '@/store/actions/user.actions';
 
 
 interface RootState {
@@ -35,12 +36,6 @@ interface RootState {
       workouts: Workout[];
     };
   };
-}
-
-interface EditForm {
-  sets: number;
-  reps: number;
-  weight: number;
 }
 
 interface CalcInput {
@@ -116,29 +111,13 @@ const WorkoutEditPage: React.FC = () => {
     try {
 
       if (!editForm) return;
-      userService.update(id!, editForm)
+      editExersice(id!, editForm)
       setIsEditModalOpen(false);
 
     } catch (error) {
       console.log("🚀 ~ handleEditSave ~ error:", error)
 
     }
-    // const updatedExercises = workout.exercise.map(exercise => {
-    //   if (exercise.name === editingExercise.name) {
-    //     return {
-    //       ...exercise,
-    //       sets: editForm.sets || 0,
-    //       reps: editForm.reps || 0,
-    //       weight: editForm.weight || 0
-    //     };
-    //   }
-    //   return exercise;
-    // });
-
-    // setWorkout({
-    //   ...workout,
-    //   exercise: updatedExercises
-    // });
   };
 
   const addExercise = () => {

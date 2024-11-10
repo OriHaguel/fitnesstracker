@@ -2,7 +2,7 @@
 import { store } from '../store'
 
 import { SET_USER, SET_USERS } from '../reducers/user.reducer'
-import { userService, SavedUser } from '@/services/user/user.service.remote'
+import { userService, SavedUser, Exercise } from '@/services/user/user.service.remote'
 
 export async function loadUsers() {
     try {
@@ -59,12 +59,11 @@ export async function logout() {
     }
 }
 
-// export async function loadUser(userId) {
-//     try {
-//         const user = await userService.getById(userId)
-//         store.dispatch({ type: SET_WATCHED_USER, user })
-//     } catch (err) {
-//         showErrorMsg('Cannot load user')
-//         console.log('Cannot load user', err)
-//     }
-// }
+export async function editExersice(userId: string, exersice: Exercise) {
+    try {
+        const user = await userService.update(userId, exersice)
+        store.dispatch({ type: SET_USER, user })
+    } catch (err) {
+        console.log('Cannot load user', err)
+    }
+}
