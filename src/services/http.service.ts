@@ -18,7 +18,7 @@ export const httpService = {
     get<T = any>(endpoint: string, data?: any): Promise<T> {
         return ajax<T>(endpoint, 'GET', data);
     },
-    post<T = any>(endpoint: string, data?: SavedUser): Promise<T> {
+    post<T = any>(endpoint: string, data?: SavedUser | Exercise): Promise<T> {
         return ajax<T>(endpoint, 'POST', data);
     },
     put<T = any>(endpoint: string, data?: string | Exercise): Promise<T> {

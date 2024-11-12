@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { WorkoutDetail } from '@/cmps/WorkoutDetail';
 import { useSelector } from 'react-redux';
-import { Exercise, userService, Workout } from '../services/user/user.service.remote';
+import { Exercise, Workout } from '../services/user/user.service.remote';
 import { editExersice } from '@/store/actions/user.actions';
 
 
@@ -49,7 +49,6 @@ const WorkoutEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const user = useSelector((state: RootState) => state.userModule.user);
-  console.log("🚀 ~ user:", user)
 
   const [workout, setWorkout] = useState<Workout>({
     _id: '',
@@ -64,6 +63,7 @@ const WorkoutEditPage: React.FC = () => {
     reps: 0,
     weight: 0,
   });
+
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
@@ -81,6 +81,7 @@ const WorkoutEditPage: React.FC = () => {
     selectedExerciseId: ''
   });
   const [calculatedWeight, setCalculatedWeight] = useState<number | null>(null);
+  console.log("🚀 ~ calculatedWeight:", calculatedWeight)
 
   useEffect(() => {
     if (id && user) {
@@ -92,7 +93,7 @@ const WorkoutEditPage: React.FC = () => {
   }, [id, user]);
 
   const handleSave = () => {
-    navigate('/');
+    navigate('/workouts');
   };
 
   const openEditModal = (exercise: Exercise) => {
@@ -111,7 +112,7 @@ const WorkoutEditPage: React.FC = () => {
     try {
 
       if (!editForm) return;
-      editExersice(id!, editForm)
+      editExersice(id!, editForm, 'put')
       setIsEditModalOpen(false);
 
     } catch (error) {
@@ -121,17 +122,17 @@ const WorkoutEditPage: React.FC = () => {
   };
 
   const addExercise = () => {
-    if (newExercise.name && newExercise.sets) {
-      setWorkout({
-        ...workout,
-        exercise: [...workout.exercise, {
-          name: newExercise.name,
-          sets: newExercise.sets,
-          reps: newExercise.reps,
-          weight: newExercise.weight
-        }]
-      });
-
+    if (Object.values(newExercise).every(value => value)) {
+      // setWorkout({
+      //   ...workout,
+      //   exercise: [...workout.exercise, {
+      //     name: newExercise.name,
+      //     sets: newExercise.sets,
+      //     reps: newExercise.reps,
+      //     weight: newExercise.weight
+      //   }]
+      // });
+      editExersice(id!, newExercise, 'post')
       setNewExercise({
         name: '',
         sets: 0,
@@ -165,10 +166,11 @@ const WorkoutEditPage: React.FC = () => {
 
     const updatedExercises = workout.exercise.map(exercise => {
       if (exercise.name === calcInput.selectedExerciseId) {
-        return {
-          ...exercise,
-          weight: calculatedWeight
-        };
+        // return {
+        //   ...exercise,
+        //   weight: calculatedWeight
+        // };
+        editExersice(id!, { name: calcInput.selectedExerciseId, weight: calculatedWeight }, 'put')
       }
       return exercise;
     });

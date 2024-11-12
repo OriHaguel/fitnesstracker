@@ -59,9 +59,9 @@ export async function logout() {
     }
 }
 
-export async function editExersice(userId: string, exersice: Exercise) {
+export async function editExersice(userId: string, exersice: Exercise, method: 'put' | 'post') {
     try {
-        const user = await userService.update(userId, exersice)
+        const user = await userService.update(userId, exersice, method)
         store.dispatch({ type: SET_USER, user })
     } catch (err) {
         console.log('Cannot load user', err)

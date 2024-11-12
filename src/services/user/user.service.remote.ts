@@ -62,9 +62,10 @@ function remove(userId: string) {
 	return httpService.delete(`users/${userId}`)
 }
 
-async function update(_id: string, exercise: Exercise) {
-	const loggedinUser = getLoggedinUser() // Might not work because its defined in the main service???
-	const user = await httpService.put(`users/${loggedinUser?._id}/workouts/${_id}/exercise`, exercise)
+async function update(_id: string, exercise: Exercise, method: 'put' | 'post') {
+	const loggedinUser = getLoggedinUser()
+	const httpMethod = method === 'put' ? httpService.put : httpService.post
+	const user = await httpMethod(`users/${loggedinUser?._id}/workouts/${_id}/exercise`, exercise)
 
 	// When admin updates other user's details, do not update loggedinUser
 	if (loggedinUser?._id === user._id) saveLoggedinUser(user)
@@ -72,6 +73,16 @@ async function update(_id: string, exercise: Exercise) {
 
 	return user
 }
+// async function addExercise(_id: string, exercise: Exercise) {
+// 	const loggedinUser = getLoggedinUser()
+// 	const user = await httpService.post(`users/${loggedinUser?._id}/workouts/${_id}/exercise`, exercise)
+
+// 	// When admin updates other user's details, do not update loggedinUser
+// 	if (loggedinUser?._id === user._id) saveLoggedinUser(user)
+// 	console.log("🚀 ~ update ~ user:", user)
+
+// 	return user
+// }
 
 async function login(credentials: SavedUser): Promise<SavedUser> {
 	try {
