@@ -30,7 +30,7 @@ import { Exercise, Workout } from '../services/user/user.service.remote';
 // import { editExersice } from '@/store/actions/user.actions';
 import { editExersice, createWorkout } from '@/store/actions/user.actions';
 
-interface RootState {
+export interface RootState {
   userModule: {
     user: {
       workouts: Workout[];
