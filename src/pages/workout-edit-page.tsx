@@ -27,8 +27,8 @@ import {
 import { WorkoutDetail } from '@/cmps/WorkoutDetail';
 import { useSelector } from 'react-redux';
 import { Exercise, Workout } from '../services/user/user.service.remote';
-import { editExersice } from '@/store/actions/user.actions';
-
+// import { editExersice } from '@/store/actions/user.actions';
+import { editExersice, createWorkout } from '@/store/actions/user.actions';
 
 interface RootState {
   userModule: {
@@ -51,7 +51,6 @@ const WorkoutEditPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
 
   const [workout, setWorkout] = useState<Workout>({
-    _id: '',
     name: '',
     type: '',
     exercise: []
@@ -63,7 +62,6 @@ const WorkoutEditPage: React.FC = () => {
     reps: 0,
     weight: 0,
   });
-
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
@@ -81,10 +79,9 @@ const WorkoutEditPage: React.FC = () => {
     selectedExerciseId: ''
   });
   const [calculatedWeight, setCalculatedWeight] = useState<number | null>(null);
-  console.log("🚀 ~ calculatedWeight:", calculatedWeight)
 
   useEffect(() => {
-    if (id && user) {
+    if (id && id !== 'new' && user) {
       const foundWorkout = user.workouts.find((w) => w._id === id);
       if (foundWorkout) {
         setWorkout(foundWorkout);
@@ -92,47 +89,58 @@ const WorkoutEditPage: React.FC = () => {
     }
   }, [id, user]);
 
-  const handleSave = () => {
-    navigate('/workouts');
+  console.log("🚀 ~ handleSave ~ workout:", workout)
+  const handleSave = async () => {
+    try {
+      if (!id || id === 'new') {
+        await createWorkout(workout);
+      }
+      navigate('/workouts');
+    } catch (error) {
+      console.error("Error saving workout:", error);
+    }
   };
 
   const openEditModal = (exercise: Exercise) => {
     setEditingExercise(exercise);
     setEditForm({
-      sets: exercise.sets ? (exercise.sets) : 0,
-      reps: exercise.reps ? (exercise.reps) : 0,
-      weight: exercise.weight ? (exercise.weight) : 0,
-      name: exercise.name ? (exercise.name) : ''
+      sets: exercise.sets || 0,
+      reps: exercise.reps || 0,
+      weight: exercise.weight || 0,
+      name: exercise.name || ''
     });
     setIsEditModalOpen(true);
   };
 
   const handleEditSave = async () => {
-
     try {
-
       if (!editForm) return;
-      editExersice(id!, editForm, 'put')
+      if (id && id !== 'new') {
+        await editExersice(id, editForm, 'put');
+      } else {
+        setWorkout(prev => ({
+          ...prev,
+          exercise: prev.exercise.map(ex =>
+            ex.name === editingExercise?.name ? { ...ex, ...editForm } : ex
+          )
+        }));
+      }
       setIsEditModalOpen(false);
-
     } catch (error) {
-      console.log("🚀 ~ handleEditSave ~ error:", error)
-
+      console.error("Error editing exercise:", error);
     }
   };
 
-  const addExercise = () => {
+  const addExercise = async () => {
     if (Object.values(newExercise).every(value => value)) {
-      // setWorkout({
-      //   ...workout,
-      //   exercise: [...workout.exercise, {
-      //     name: newExercise.name,
-      //     sets: newExercise.sets,
-      //     reps: newExercise.reps,
-      //     weight: newExercise.weight
-      //   }]
-      // });
-      editExersice(id!, newExercise, 'post')
+      if (id && id !== 'new') {
+        await editExersice(id, newExercise, 'post');
+      } else {
+        setWorkout(prev => ({
+          ...prev,
+          exercise: [...prev.exercise, newExercise]
+        }));
+      }
       setNewExercise({
         name: '',
         sets: 0,
@@ -143,10 +151,10 @@ const WorkoutEditPage: React.FC = () => {
   };
 
   const removeExercise = (exerciseName: string) => {
-    setWorkout({
-      ...workout,
-      exercise: workout.exercise.filter(e => e.name !== exerciseName)
-    });
+    setWorkout(prev => ({
+      ...prev,
+      exercise: prev.exercise.filter(e => e.name !== exerciseName)
+    }));
   };
 
   const calculateWeight = () => {
@@ -161,24 +169,24 @@ const WorkoutEditPage: React.FC = () => {
     }
   };
 
-  const applyWeightToExercise = () => {
+  const applyWeightToExercise = async () => {
     if (!calculatedWeight || !calcInput.selectedExerciseId) return;
 
-    const updatedExercises = workout.exercise.map(exercise => {
-      if (exercise.name === calcInput.selectedExerciseId) {
-        // return {
-        //   ...exercise,
-        //   weight: calculatedWeight
-        // };
-        editExersice(id!, { name: calcInput.selectedExerciseId, weight: calculatedWeight }, 'put')
-      }
-      return exercise;
-    });
+    if (id && id !== 'new') {
+      await editExersice(id, {
+        name: calcInput.selectedExerciseId,
+        weight: calculatedWeight
+      }, 'put');
+    }
 
-    setWorkout({
-      ...workout,
-      exercise: updatedExercises
-    });
+    setWorkout(prev => ({
+      ...prev,
+      exercise: prev.exercise.map(exercise =>
+        exercise.name === calcInput.selectedExerciseId
+          ? { ...exercise, weight: calculatedWeight }
+          : exercise
+      )
+    }));
 
     setCalcInput(prev => ({
       ...prev,
@@ -195,7 +203,7 @@ const WorkoutEditPage: React.FC = () => {
           <ArrowLeft size={16} />
         </Button>
         <h1 className="text-2xl font-bold">
-          {id === 'new' ? 'Create Workout' : 'Edit Workout'}
+          {!id || id === 'new' ? 'Create Workout' : 'Edit Workout'}
         </h1>
       </div>
 
@@ -300,11 +308,11 @@ const WorkoutEditPage: React.FC = () => {
             <div className="grid gap-4">
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="currentWeight">Current Weight (kg)</Label>
+                  <Label htmlFor="currentWeight">Current Weight</Label>
                   <Input
                     id="currentWeight"
                     type="number"
-                    placeholder="60"
+                    placeholder="60 (kg)"
                     value={calcInput.currentWeight}
                     onChange={(e) => setCalcInput(prev => ({
                       ...prev,
@@ -445,7 +453,6 @@ const WorkoutEditPage: React.FC = () => {
             <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
               Cancel
             </Button>
-            {/* <Button onClick={() => userService.update(id!, { name: 'Bench Press', reps: 10 })}>Save Changes</Button> */}
             <Button onClick={handleEditSave}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>

@@ -13,7 +13,8 @@ export const userService = {
 	update,
 	getLoggedinUser,
 	saveLoggedinUser,
-	getEmptyCredentials
+	getEmptyCredentials,
+	addWorkout
 }
 
 export interface Exercise {
@@ -23,7 +24,7 @@ export interface Exercise {
 	name: string
 }
 export interface Workout {
-	_id: string
+	_id?: string
 	name: string
 	type: string
 	exercise: Exercise[]
@@ -68,6 +69,15 @@ async function update(_id: string, exercise: Exercise, method: 'put' | 'post') {
 	const user = await httpMethod(`users/${loggedinUser?._id}/workouts/${_id}/exercise`, exercise)
 
 	// When admin updates other user's details, do not update loggedinUser
+	if (loggedinUser?._id === user._id) saveLoggedinUser(user)
+	console.log("🚀 ~ update ~ user:", user)
+
+	return user
+}
+async function addWorkout(workout: Workout) {
+	const loggedinUser = getLoggedinUser()
+	const user = await httpService.post(`users/${loggedinUser?._id}/workout`, workout)
+
 	if (loggedinUser?._id === user._id) saveLoggedinUser(user)
 	console.log("🚀 ~ update ~ user:", user)
 

@@ -2,7 +2,7 @@
 import { store } from '../store'
 
 import { SET_USER, SET_USERS } from '../reducers/user.reducer'
-import { userService, SavedUser, Exercise } from '@/services/user/user.service.remote'
+import { userService, SavedUser, Exercise, Workout } from '@/services/user/user.service.remote'
 
 export async function loadUsers() {
     try {
@@ -62,6 +62,14 @@ export async function logout() {
 export async function editExersice(userId: string, exersice: Exercise, method: 'put' | 'post') {
     try {
         const user = await userService.update(userId, exersice, method)
+        store.dispatch({ type: SET_USER, user })
+    } catch (err) {
+        console.log('Cannot load user', err)
+    }
+}
+export async function createWorkout(workout: Workout) {
+    try {
+        const user = await userService.addWorkout(workout)
         store.dispatch({ type: SET_USER, user })
     } catch (err) {
         console.log('Cannot load user', err)

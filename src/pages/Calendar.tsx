@@ -200,6 +200,13 @@ export default function Calendar() {
                 variant="ghost"
                 size="icon"
                 className="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity md:block hidden"
+                style={
+                  {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }
+                }
               >
                 <Plus className="w-4 h-4 text-gray-500" />
               </Button>

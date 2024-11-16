@@ -6,7 +6,6 @@ import { SavedUser } from "@/services/user/user.service.remote";
 export const SET_USER = 'SET_USER' as const;
 export const SET_WATCHED_USER = 'SET_WATCHED_USER' as const;
 export const SET_USERS = 'SET_USERS' as const;
-export const SET_SCORE = 'SET_SCORE' as const;
 
 // Define the User interface (update properties as per your actual user structure)
 
@@ -28,13 +27,10 @@ interface SetUsersAction {
     users: SavedUser[];
 }
 
-interface SetScoreAction {
-    type: typeof SET_SCORE;
-    score: number;
-}
+
 
 // Union type for all actions
-type UserActions = SetUserAction | SetUsersAction | SetScoreAction;
+type UserActions = SetUserAction | SetUsersAction;
 
 // Initial State
 const initialState: UserState = {
@@ -49,11 +45,6 @@ export function userReducer(state: UserState = initialState, action: UserActions
             return { ...state, user: action.user };
         case SET_USERS:
             return { ...state, users: action.users };
-        case SET_SCORE:
-            if (!state.user) return state; // Ensure user exists before updating score
-            const updatedUser = { ...state.user, score: action.score };
-            userService.saveLoggedinUser(updatedUser);
-            return { ...state, user: updatedUser };
         default:
             return state; // Return the current state for unrecognized actions
     }
