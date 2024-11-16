@@ -6,6 +6,7 @@ import AuthPage from './pages/fitness-auth-page'
 import WorkoutListPage from './pages/workout-list-page'
 import WorkoutEditPage from './pages/workout-edit-page'
 import Home from './pages/Home'
+import { WorkoutTrackingPage } from './pages/workout-tracking-page'
 
 export function RootCmp() {
     const location = useLocation();
@@ -24,6 +25,7 @@ export function RootCmp() {
                     <Route path='/workouts' element={<WorkoutListPage />} />
                     <Route path='/workouts/:id' element={<WorkoutEditPage />} />
                     <Route path='/workouts/new' element={<WorkoutEditPage />} />
+                    <Route path='/today' element={<WorkoutTrackingPage />} />
                 </Routes>
             </main>
         </div>
