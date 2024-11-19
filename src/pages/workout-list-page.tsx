@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Workout } from "../services/user/user.service.remote";
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { deleteWorkout } from '@/store/actions/user.actions';
 const WorkoutListPage = () => {
 
   const user = useSelector((state: any) => state.userModule.user);
@@ -52,8 +53,8 @@ const WorkoutListPage = () => {
               <Button
                 variant="destructive"
                 className="flex items-center gap-2"
-              //  delete workout 
-              // onClick={() => handleDeleteWorkout(workout.id)}
+                // onClick={() => deleteWorkout(workout.?_id)}
+                onClick={() => deleteWorkout(workout._id!)}
               >
                 <Trash2 size={16} />
                 Delete

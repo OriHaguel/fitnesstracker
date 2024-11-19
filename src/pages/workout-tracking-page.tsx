@@ -1,52 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dumbbell } from 'lucide-react';
-import { Exercise, Workout } from '../services/user/user.service.remote'
-
-
-interface ExerciseWithSets extends Omit<Exercise, 'sets'> {
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Workout, SavedUser, Exercise } from '../services/user/user.service.remote'
+// Interfaces
+interface ExerciseWithSets {
+  name: string;
   sets: Array<{
     weight: number;
     reps: number;
   }>;
 }
 
-// Demo data based on the provided interfaces
-const demoWorkout: Workout = {
-  name: "Upper Body Strength",
-  type: "Strength",
-  exercise: [
-    {
-      name: "Bench Press",
-      sets: 2,
-      weight: 135,
-      reps: 8
-    },
-    {
-      name: "Overhead Press",
-      sets: 4,
-      weight: 95,
-      reps: 10
-    },
-    {
-      name: "Barbell Row",
-      sets: 3,
-      weight: 115,
-      reps: 12
-    }
-  ]
-};
+interface RootState {
+  userModule: {
+    user: SavedUser;
+  };
+}
 
 export const WorkoutTrackingPage: React.FC = () => {
-  // State to track exercise data
-  const [exercises, setExercises] = useState<ExerciseWithSets[]>(
-    demoWorkout.exercise.map(ex => ({
-      name: ex.name,
-      sets: Array(ex.sets).fill({ weight: ex.weight || 0, reps: ex.reps || 0 })
-    }))
-  );
+  const user = useSelector((state: RootState) => state.userModule.user);
+  const currentWorkout = user.workouts[0];
+
+  const [exercises, setExercises] = useState<ExerciseWithSets[]>([]);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  useEffect(() => {
+    if (currentWorkout?.exercise) {
+      const initialExercises = currentWorkout.exercise.map(ex => ({
+        name: ex.name,
+        sets: Array(ex.sets || 1).fill({
+          weight: ex.weight || 0,
+          reps: ex.reps || 0
+        })
+      }));
+      setExercises(initialExercises);
+    }
+  }, [currentWorkout]);
 
   const updateSet = (exerciseIndex: number, setIndex: number, field: 'weight' | 'reps', value: number): void => {
     setExercises(prev => {
@@ -59,22 +53,71 @@ export const WorkoutTrackingPage: React.FC = () => {
     });
   };
 
-  const handleSaveWorkout = (): void => {
-    // TODO: Implement save functionality
-    console.log('Saving workout:', exercises);
+
+
+  const handleSaveWorkout = async (): Promise<void> => {
+    try {
+      setSaveStatus('saving');
+
+      // Convert ExerciseWithSets[] back to Exercise[] format
+      const savedExercises: Exercise[] = exercises.map(ex => ({
+        name: ex.name,
+        sets: ex.sets.length,
+        // Use the last set's values as the exercise's values
+        weight: ex.sets[ex.sets.length - 1].weight,
+        reps: ex.sets[ex.sets.length - 1].reps
+      }));
+
+      const updatedWorkout: Workout = {
+        ...currentWorkout,
+        exercise: savedExercises
+      };
+
+      // TODO: Replace this with your actual API call
+      // const response = await userService.updateWorkout(updatedWorkout);
+
+      // TODO: Dispatch action to update Redux store
+      // dispatch(updateWorkout(updatedWorkout));
+
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    } catch (error) {
+      setSaveStatus('error');
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to save workout');
+    }
   };
+
+  if (!exercises.length) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4 max-w-3xl">
       <div className="flex items-center gap-2 mb-6">
         <Dumbbell className="h-6 w-6" />
-        <h1 className="text-2xl font-bold">{demoWorkout.name}</h1>
+        <h1 className="text-2xl font-bold">{currentWorkout.name}</h1>
       </div>
+
+      {saveStatus === 'error' && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      {saveStatus === 'saved' && (
+        <Alert className="mb-4">
+          <AlertDescription>Workout saved successfully!</AlertDescription>
+        </Alert>
+      )}
 
       <div className="space-y-6">
         {exercises.map((exercise, exerciseIndex) => (
           <Card key={exercise.name} className="relative">
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>{exercise.name}</CardTitle>
             </CardHeader>
             <CardContent>
@@ -94,18 +137,20 @@ export const WorkoutTrackingPage: React.FC = () => {
                       <Input
                         type="number"
                         value={set.weight || ''}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          updateSet(exerciseIndex, setIndex, 'weight', Number(e.target.value))}
+                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', Number(e.target.value))}
                         className="w-full"
+                        min="0"
+                        step="0.5"
                       />
                     </div>
                     <div className="col-span-3">
                       <Input
                         type="number"
                         value={set.reps || ''}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          updateSet(exerciseIndex, setIndex, 'reps', Number(e.target.value))}
+                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', Number(e.target.value))}
                         className="w-full"
+                        min="0"
+                        step="1"
                       />
                     </div>
                   </div>
@@ -115,11 +160,14 @@ export const WorkoutTrackingPage: React.FC = () => {
           </Card>
         ))}
 
-        <Button onClick={handleSaveWorkout} className="w-full">
-          Finish Workout
+        <Button
+          onClick={handleSaveWorkout}
+          className="w-full"
+          disabled={saveStatus === 'saving'}
+        >
+          {saveStatus === 'saving' ? 'Saving...' : 'Finish Workout'}
         </Button>
       </div>
     </div>
   );
 };
-

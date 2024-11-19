@@ -14,7 +14,8 @@ export const userService = {
 	getLoggedinUser,
 	saveLoggedinUser,
 	getEmptyCredentials,
-	addWorkout
+	addWorkout,
+	deleteWorkoutById
 }
 
 export interface Exercise {
@@ -82,6 +83,18 @@ async function addWorkout(workout: Workout) {
 	console.log("🚀 ~ update ~ user:", user)
 
 	return user
+}
+async function deleteWorkoutById(workoutId: string) {
+	try {
+		const loggedinUser = getLoggedinUser()
+		const user = await httpService.delete(`users/${loggedinUser?._id}/workouts/${workoutId}`)
+		if (loggedinUser?._id === user._id) saveLoggedinUser(user)
+
+		return user
+	} catch (error) {
+		console.log("🚀 ~ deleteWorkout ~ error:", error)
+
+	}
 }
 // async function addExercise(_id: string, exercise: Exercise) {
 // 	const loggedinUser = getLoggedinUser()

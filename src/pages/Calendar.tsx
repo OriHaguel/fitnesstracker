@@ -30,7 +30,7 @@ const WEEKDAYS = [
 
 export default function Calendar() {
   const user = useSelector((state: RootState) => state.userModule.user);
-  const [currentDate, setCurrentDate] = useState<Date>(new Date(2024, 9, 1))
+  const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [isAddWorkoutModalOpen, setIsAddWorkoutModalOpen] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
