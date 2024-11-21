@@ -1,80 +1,23 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
-// import { ChevronLeft, ChevronRight, Plus, Clock, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-// import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useState } from "react"
 import { useSelector } from "react-redux"
-import { Workout } from "@/services/user/user.service.remote"
 import { RootState } from "./workout-edit-page"
+import { Workout } from "@/services/user/user.service.remote"
+import { editWorkout } from "@/store/actions/user.actions"
+import { getStartDayOfMonth, isSameDay, isSameMonth, addDays, formatDate, WEEKDAYS } from "@/services/util.service"
 
-interface Event {
-  id: string
-  title: string
-  date: Date
-  workout: Workout
-  color: string
-  borderColor: string
-}
 
-const WEEKDAYS = [
-  { short: "S", full: "Sun", id: "sun" },
-  { short: "M", full: "Mon", id: "mon" },
-  { short: "T", full: "Tue", id: "tue" },
-  { short: "W", full: "Wed", id: "wed" },
-  { short: "T", full: "Thu", id: "thu" },
-  { short: "F", full: "Fri", id: "fri" },
-  { short: "S", full: "Sat", id: "sat" },
-]
 
 export default function Calendar() {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [isAddWorkoutModalOpen, setIsAddWorkoutModalOpen] = useState(false)
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
   const [isEventModalOpen, setIsEventModalOpen] = useState(false)
-  const [workoutEvents, setWorkoutEvents] = useState<Event[]>([])
-
-  console.log("🚀 ~ Calendar ~ selectedEvent:", selectedEvent)
-  const getStartDayOfMonth = (date: Date): number => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-  }
-
-  const isSameDay = (date1: Date, date2: Date): boolean => {
-    return date1.getDate() === date2.getDate() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getFullYear() === date2.getFullYear()
-  }
-
-  const isSameMonth = (date1: Date, date2: Date): boolean => {
-    return date1.getMonth() === date2.getMonth() &&
-      date1.getFullYear() === date2.getFullYear()
-  }
-
-  const addDays = (date: Date, days: number): Date => {
-    const result = new Date(date)
-    result.setDate(result.getDate() + days)
-    return result
-  }
-
-  const formatDate = (date: Date, format: string): string => {
-    const months = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-    ]
-    const days = [
-      "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
-    ]
-
-    return format
-      .replace("MMMM", months[date.getMonth()])
-      .replace("yyyy", date.getFullYear().toString())
-      .replace("EEEE", days[date.getDay()])
-      .replace("d", date.getDate().toString())
-      .replace("MMM", months[date.getMonth()].substring(0, 3))
-  }
 
   const handleDayClick = (date: Date, event?: React.MouseEvent) => {
     if (event) {
@@ -97,65 +40,54 @@ export default function Calendar() {
     return colorMap[type.toLowerCase()] || colorMap.default
   }
 
-  const handleWorkoutSelect = (workout: Workout) => {
-    if (selectedDate) {
-      const colors = getWorkoutColor(workout.type)
-      const newEvent: Event = {
-        id: `${workout._id}-${selectedDate.getTime()}`,
-        title: workout.name,
-        date: selectedDate,
-        workout: workout,
-        ...colors
-      }
-      setWorkoutEvents([...workoutEvents, newEvent])
-      setIsAddWorkoutModalOpen(false)
-    }
+  const WorkoutCard = ({ workout }: { workout: Workout }) => {
+    const colors = getWorkoutColor(workout.type)
+    return (
+      <div
+        onClick={(e) => {
+          e.stopPropagation()
+          setSelectedWorkout(workout)
+          setIsEventModalOpen(true)
+        }}
+        className={`
+          group/event relative
+          ${colors.color} ${colors.borderColor}
+          border-l-4 rounded-r-md
+          px-2 py-1 mb-1
+          cursor-pointer
+          transition-all duration-200
+          hover:translate-x-1
+          hover:shadow-md
+          md:text-sm text-xs
+        `}
+      >
+        <div className="flex items-center gap-1">
+          <span className="font-medium text-white truncate">
+            {workout.name}
+          </span>
+        </div>
+        <div className="absolute inset-0 bg-black opacity-0 group-hover/event:opacity-5 rounded-r-md transition-opacity" />
+      </div>
+    )
   }
 
-  const EventCard = ({ event }: { event: Event }) => (
-    <div
-      onClick={(e) => {
-        e.stopPropagation()
-        setSelectedEvent(event)
-        setIsEventModalOpen(true)
-      }}
-      className={`
-        group/event relative
-        ${event.color} ${event.borderColor}
-        border-l-4 rounded-r-md
-        px-2 py-1 mb-1
-        cursor-pointer
-        transition-all duration-200
-        hover:translate-x-1
-        hover:shadow-md
-        md:text-sm text-xs
-      `}
-    >
-      <div className="flex items-center gap-1">
-        <span className="font-medium text-white truncate">
-          {event.title}
-        </span>
-      </div>
-      <div className="absolute inset-0 bg-black opacity-0 group-hover/event:opacity-5 rounded-r-md transition-opacity" />
-    </div>
-  )
-
-  const EventDetailsModal = ({ event, isOpen, onClose }: {
-    event: Event | null
+  const WorkoutDetailsModal = ({ workout, isOpen, onClose }: {
+    workout: Workout | null
     isOpen: boolean
     onClose: () => void
   }) => {
-    if (!event) return null
+    if (!workout) return null
 
+    const colors = getWorkoutColor(workout.type)
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>
-              <div className={`${event.color} text-white p-3 -m-6 mb-6 rounded-t-lg`}>
-                <h3 className="font-semibold text-lg">{event.title}</h3>
+              <div className={`${colors.color} text-white p-3 -m-6 mb-6 rounded-t-lg`}>
+                <h3 className="font-semibold text-lg">{workout.name}</h3>
                 <p className="text-sm text-white/90">
-                  {formatDate(event.date, "EEEE, MMMM , yyyy")}
+                  {workout.date ? formatDate(new Date(workout.date), "EEEE, MMMM d, yyyy") : ""}
                 </p>
               </div>
             </DialogTitle>
@@ -163,12 +95,12 @@ export default function Calendar() {
           <div className="space-y-4">
             <div>
               <h4 className="font-medium text-gray-700 mb-2">Workout Type</h4>
-              <p className="text-gray-600">{event.workout.type}</p>
+              <p className="text-gray-600">{workout.type}</p>
             </div>
             <div>
               <h4 className="font-medium text-gray-700 mb-2">Exercises</h4>
               <div className="space-y-2">
-                {event.workout.exercise.map((exercise, index) => (
+                {workout.exercise.map((exercise, index) => (
                   <div key={index} className="text-gray-600">
                     <p className="font-medium">{exercise.name}</p>
                     {exercise.sets && exercise.reps && (
@@ -197,7 +129,9 @@ export default function Calendar() {
       const date = addDays(startDate, i - startDayOfWeek)
       const isCurrentMonth = isSameMonth(date, currentDate)
       const isToday = isSameDay(date, new Date())
-      const dayEvents = workoutEvents.filter(event => isSameDay(event.date, date))
+      const dayWorkouts = user.workouts.filter(workout =>
+        workout.date && isSameDay(new Date(workout.date), date)
+      )
 
       days.push(
         <div
@@ -228,8 +162,8 @@ export default function Calendar() {
           </div>
 
           <div className="px-1 overflow-y-auto max-h-14 md:max-h-20">
-            {isCurrentMonth && dayEvents.map(event => (
-              <EventCard key={event.id} event={event} />
+            {isCurrentMonth && dayWorkouts.map(workout => (
+              <WorkoutCard key={workout._id} workout={workout} />
             ))}
           </div>
         </div>
@@ -289,7 +223,7 @@ export default function Calendar() {
         </div>
       </Card>
 
-      <Dialog open={isAddWorkoutModalOpen} onOpenChange={setIsAddWorkoutModalOpen} >
+      <Dialog open={isAddWorkoutModalOpen} onOpenChange={setIsAddWorkoutModalOpen}>
         <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>
@@ -302,7 +236,10 @@ export default function Calendar() {
                 key={workout._id}
                 variant="outline"
                 className="w-full justify-start text-left h-auto py-3"
-                onClick={() => handleWorkoutSelect(workout)}
+                onClick={() => {
+                  editWorkout(workout._id!, { date: selectedDate })
+                  setIsAddWorkoutModalOpen(false)
+                }}
               >
                 <div>
                   <div className="font-medium">{workout.name}</div>
@@ -316,12 +253,12 @@ export default function Calendar() {
         </DialogContent>
       </Dialog>
 
-      <EventDetailsModal
-        event={selectedEvent}
+      <WorkoutDetailsModal
+        workout={selectedWorkout}
         isOpen={isEventModalOpen}
         onClose={() => {
           setIsEventModalOpen(false)
-          setSelectedEvent(null)
+          setSelectedWorkout(null)
         }}
       />
     </>

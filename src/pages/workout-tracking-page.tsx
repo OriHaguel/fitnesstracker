@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dumbbell } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Workout, SavedUser, Exercise } from '../services/user/user.service.remote'
-// Interfaces
+import { Workout, SavedUser, Exercise } from '../services/user/user.service.remote';
+import { isSameDate } from '@/services/util.service';
+
 interface ExerciseWithSets {
   name: string;
   sets: Array<{
@@ -23,11 +24,17 @@ interface RootState {
 
 export const WorkoutTrackingPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
-  const currentWorkout = user.workouts[0];
-
+  const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithSets[]>([]);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
+
+  useEffect(() => {
+    const todaysWorkout = user.workouts.find(workout =>
+      workout.date && isSameDate(new Date(workout.date))
+    );
+    setCurrentWorkout(todaysWorkout || null);
+  }, [user.workouts]);
 
   useEffect(() => {
     if (currentWorkout?.exercise) {
@@ -53,17 +60,15 @@ export const WorkoutTrackingPage: React.FC = () => {
     });
   };
 
-
-
   const handleSaveWorkout = async (): Promise<void> => {
+    if (!currentWorkout) return;
+
     try {
       setSaveStatus('saving');
 
-      // Convert ExerciseWithSets[] back to Exercise[] format
       const savedExercises: Exercise[] = exercises.map(ex => ({
         name: ex.name,
         sets: ex.sets.length,
-        // Use the last set's values as the exercise's values
         weight: ex.sets[ex.sets.length - 1].weight,
         reps: ex.sets[ex.sets.length - 1].reps
       }));
@@ -73,11 +78,8 @@ export const WorkoutTrackingPage: React.FC = () => {
         exercise: savedExercises
       };
 
-      // TODO: Replace this with your actual API call
+      // TODO: Replace with API call
       // const response = await userService.updateWorkout(updatedWorkout);
-
-      // TODO: Dispatch action to update Redux store
-      // dispatch(updateWorkout(updatedWorkout));
 
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
@@ -86,6 +88,16 @@ export const WorkoutTrackingPage: React.FC = () => {
       setErrorMessage(error instanceof Error ? error.message : 'Failed to save workout');
     }
   };
+
+  if (!currentWorkout) {
+    return (
+      <div className="container mx-auto p-4 max-w-3xl">
+        <Alert>
+          <AlertDescription>No workout scheduled for today.</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   if (!exercises.length) {
     return (

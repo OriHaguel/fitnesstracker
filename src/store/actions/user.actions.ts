@@ -83,3 +83,12 @@ export async function deleteWorkout(workoutId: string) {
         console.log('Cannot load user', err)
     }
 }
+export async function editWorkout(workoutId: string, updateData: any) {
+    try {
+        const user = await userService.updateWorkout(workoutId, updateData)
+        store.dispatch({ type: SET_USER, user })
+    } catch (err) {
+        console.log('Cannot load user', err)
+    }
+}
+
