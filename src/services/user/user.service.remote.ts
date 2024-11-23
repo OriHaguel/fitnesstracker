@@ -16,7 +16,8 @@ export const userService = {
 	getEmptyCredentials,
 	addWorkout,
 	deleteWorkoutById,
-	updateWorkout
+	updateWorkout,
+	deleteExerciseById
 }
 
 export interface Exercise {
@@ -45,6 +46,7 @@ export interface SavedUser {
 	weight: Weight[]
 	workouts: Workout[]
 }
+
 export class AuthenticationError extends Error {
 	constructor(message: string) {
 		super(message)
@@ -77,6 +79,7 @@ async function update(_id: string, exercise: Exercise, method: 'put' | 'post') {
 
 	return user
 }
+
 async function addWorkout(workout: Workout) {
 	const loggedinUser = getLoggedinUser()
 	const user = await httpService.post(`users/${loggedinUser?._id}/workout`, workout)
@@ -90,6 +93,18 @@ async function deleteWorkoutById(workoutId: string) {
 	try {
 		const loggedinUser = getLoggedinUser()
 		const user = await httpService.delete(`users/${loggedinUser?._id}/workouts/${workoutId}`)
+		if (loggedinUser?._id === user._id) saveLoggedinUser(user)
+
+		return user
+	} catch (error) {
+		console.log("🚀 ~ deleteWorkout ~ error:", error)
+
+	}
+}
+async function deleteExerciseById(workoutId: string, exerciseName: { name: string }) {
+	try {
+		const loggedinUser = getLoggedinUser()
+		const user = await httpService.delete(`users/${loggedinUser?._id}/workouts/${workoutId}/exercise`, exerciseName)
 		if (loggedinUser?._id === user._id) saveLoggedinUser(user)
 
 		return user
@@ -136,7 +151,6 @@ async function login(credentials: SavedUser): Promise<SavedUser> {
 	}
 }
 
-
 async function signup(userCred: SavedUser): Promise<SavedUser> {
 
 	try {
@@ -164,8 +178,6 @@ function getLoggedinUser(): SavedUser | null {
 		return null; // Return null on error
 	}
 }
-
-
 
 function saveLoggedinUser(user: SavedUser) {
 	user = {

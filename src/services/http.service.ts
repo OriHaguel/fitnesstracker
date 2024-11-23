@@ -24,8 +24,8 @@ export const httpService = {
     put<T = any>(endpoint: string, data?: string | Exercise): Promise<T> {
         return ajax<T>(endpoint, 'PUT', data);
     },
-    delete<T = any>(endpoint: string): Promise<T> {
-        return ajax<T>(endpoint, 'DELETE');
+    delete<T = any>(endpoint: string, data?: string | object): Promise<T> {
+        return ajax<T>(endpoint, 'DELETE', data);
     }
 };
 

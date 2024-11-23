@@ -59,9 +59,9 @@ export async function logout() {
     }
 }
 
-export async function editExersice(userId: string, exersice: Exercise, method: 'put' | 'post') {
+export async function editExercise(userId: string, exercise: Exercise, method: 'put' | 'post') {
     try {
-        const user = await userService.update(userId, exersice, method)
+        const user = await userService.update(userId, exercise, method)
         store.dispatch({ type: SET_USER, user })
     } catch (err) {
         console.log('Cannot load user', err)
@@ -78,6 +78,14 @@ export async function createWorkout(workout: Workout) {
 export async function deleteWorkout(workoutId: string) {
     try {
         const user = await userService.deleteWorkoutById(workoutId)
+        store.dispatch({ type: SET_USER, user })
+    } catch (err) {
+        console.log('Cannot load user', err)
+    }
+}
+export async function deleteExercise(workoutId: string, exerciseName: { name: string }) {
+    try {
+        const user = await userService.deleteExerciseById(workoutId, exerciseName)
         store.dispatch({ type: SET_USER, user })
     } catch (err) {
         console.log('Cannot load user', err)

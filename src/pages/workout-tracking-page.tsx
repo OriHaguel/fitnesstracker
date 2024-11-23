@@ -7,6 +7,7 @@ import { Dumbbell } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Workout, SavedUser, Exercise } from '../services/user/user.service.remote';
 import { isSameDate } from '@/services/util.service';
+import { editExercise } from '@/store/actions/user.actions';
 
 interface ExerciseWithSets {
   name: string;
@@ -26,6 +27,7 @@ export const WorkoutTrackingPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithSets[]>([]);
+  console.log("🚀 ~ exercises:", exercises)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
 

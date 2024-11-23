@@ -55,6 +55,4 @@ export function isSameDate(date: Date): boolean {
     );
 }
 
-// Example usage
-const inputDate = new Date('2024-11-21T10:00:00.000Z');
-console.log(isSameDate(inputDate)); // true if it's the same date as today
+

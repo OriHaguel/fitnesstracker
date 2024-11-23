@@ -27,8 +27,7 @@ import {
 import { WorkoutDetail } from '@/cmps/WorkoutDetail';
 import { useSelector } from 'react-redux';
 import { Exercise, Workout } from '../services/user/user.service.remote';
-// import { editExersice } from '@/store/actions/user.actions';
-import { editExersice, createWorkout } from '@/store/actions/user.actions';
+import { editExercise, createWorkout, deleteExercise } from '@/store/actions/user.actions';
 
 export interface RootState {
   userModule: {
@@ -48,6 +47,7 @@ interface CalcInput {
 const WorkoutEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  console.log("🚀 ~ id:", id)
   const user = useSelector((state: RootState) => state.userModule.user);
 
   const [workout, setWorkout] = useState<Workout>({
@@ -89,7 +89,6 @@ const WorkoutEditPage: React.FC = () => {
     }
   }, [id, user]);
 
-  console.log("🚀 ~ handleSave ~ workout:", workout)
   const handleSave = async () => {
     try {
       if (!id || id === 'new') {
@@ -116,7 +115,7 @@ const WorkoutEditPage: React.FC = () => {
     try {
       if (!editForm) return;
       if (id && id !== 'new') {
-        await editExersice(id, editForm, 'put');
+        await editExercise(id, editForm, 'put');
       } else {
         setWorkout(prev => ({
           ...prev,
@@ -134,7 +133,7 @@ const WorkoutEditPage: React.FC = () => {
   const addExercise = async () => {
     if (Object.values(newExercise).every(value => value)) {
       if (id && id !== 'new') {
-        await editExersice(id, newExercise, 'post');
+        await editExercise(id, newExercise, 'post');
       } else {
         setWorkout(prev => ({
           ...prev,
@@ -173,7 +172,7 @@ const WorkoutEditPage: React.FC = () => {
     if (!calculatedWeight || !calcInput.selectedExerciseId) return;
 
     if (id && id !== 'new') {
-      await editExersice(id, {
+      await editExercise(id, {
         name: calcInput.selectedExerciseId,
         weight: calculatedWeight
       }, 'put');
@@ -195,6 +194,7 @@ const WorkoutEditPage: React.FC = () => {
   };
 
   if (!user) return null;
+
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -233,10 +233,14 @@ const WorkoutEditPage: React.FC = () => {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => removeExercise(exercise.name)}
+                    onClick={() => {
+                      id === undefined ? removeExercise(exercise.name) :
+                        deleteExercise(workout._id!, { name: exercise.name })
+                    }}
                   >
                     <Trash2 size={16} />
                   </Button>
+
                 </div>
               ))}
 
