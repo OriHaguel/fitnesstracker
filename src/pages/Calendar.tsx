@@ -8,6 +8,8 @@ import { RootState } from "./workout-edit-page"
 import { Workout } from "@/services/user/user.service.remote"
 import { editWorkout } from "@/store/actions/user.actions"
 import { getStartDayOfMonth, isSameDay, isSameMonth, addDays, formatDate, WEEKDAYS } from "@/services/util.service"
+import { getLastSetsById } from "@/services/tracking progress/progress.service"
+import { useQuery } from "@tanstack/react-query"
 
 
 
@@ -119,6 +121,14 @@ export default function Calendar() {
     )
   }
 
+
+
+  const set = useQuery({
+    queryKey: ['sets', '674236db3c3793e01cbdfea1'],
+    queryFn: () => getLastSetsById('674236db3c3793e01cbdfea1')
+  }
+  )
+  console.log("🚀 ~ Calendar ~ set:", set.data)
   const renderDays = () => {
     const days: JSX.Element[] = []
     const totalCells = 42
