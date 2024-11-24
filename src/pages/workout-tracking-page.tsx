@@ -7,8 +7,9 @@ import { Dumbbell } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Workout, SavedUser, Exercise } from '../services/user/user.service.remote';
 import { isSameDate } from '@/services/util.service';
-import { editExercise } from '@/store/actions/user.actions';
-
+// import { editExercise } from '@/store/actions/user.actions';
+import { getLastSetsById } from "@/services/tracking progress/progress.service"
+import { useQueries, useQuery } from "@tanstack/react-query"
 interface ExerciseWithSets {
   name: string;
   sets: Array<{
@@ -27,7 +28,6 @@ export const WorkoutTrackingPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithSets[]>([]);
-  console.log("🚀 ~ exercises:", exercises)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -50,6 +50,13 @@ export const WorkoutTrackingPage: React.FC = () => {
       setExercises(initialExercises);
     }
   }, [currentWorkout]);
+
+  const sets = useQuery({
+    queryKey: ['sets'],
+    queryFn: () => getLastSetsById('chest')
+  })
+
+  console.log("🚀 ~ sets:", sets.data)
 
   const updateSet = (exerciseIndex: number, setIndex: number, field: 'weight' | 'reps', value: number): void => {
     setExercises(prev => {
@@ -101,7 +108,7 @@ export const WorkoutTrackingPage: React.FC = () => {
     );
   }
 
-  if (!exercises.length) {
+  if (!exercises.length || sets.isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
@@ -150,7 +157,7 @@ export const WorkoutTrackingPage: React.FC = () => {
                     <div className="col-span-3">
                       <Input
                         type="number"
-                        value={set.weight || ''}
+                        value={exercise.name === sets.data.name ? sets.data.lastSet.weight : ''}
                         onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', Number(e.target.value))}
                         className="w-full"
                         min="0"
@@ -160,7 +167,7 @@ export const WorkoutTrackingPage: React.FC = () => {
                     <div className="col-span-3">
                       <Input
                         type="number"
-                        value={set.reps || ''}
+                        value={exercise.name === sets.data.name ? sets.data.lastSet.reps : ''}
                         onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', Number(e.target.value))}
                         className="w-full"
                         min="0"
