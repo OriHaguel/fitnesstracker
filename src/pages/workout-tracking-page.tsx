@@ -7,9 +7,9 @@ import { Dumbbell } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Workout, SavedUser, Exercise } from '../services/user/user.service.remote';
 import { isSameDate } from '@/services/util.service';
-// import { editExercise } from '@/store/actions/user.actions';
 import { getLastSetsById } from "@/services/tracking progress/progress.service"
 import { useQueries, useQuery } from "@tanstack/react-query"
+
 interface ExerciseWithSets {
   name: string;
   sets: Array<{
@@ -51,12 +51,18 @@ export const WorkoutTrackingPage: React.FC = () => {
     }
   }, [currentWorkout]);
 
-  const sets = useQuery({
-    queryKey: ['sets'],
-    queryFn: () => getLastSetsById('chest')
-  })
+  // Use useQueries to fetch last sets for each exercise
+  const exerciseQueries = useQueries({
+    queries: exercises.map(exercise => ({
+      queryKey: ['sets', exercise.name],
+      queryFn: () => getLastSetsById(exercise.name),
+      enabled: !!exercise.name,
+    }))
+  });
 
-  console.log("🚀 ~ sets:", sets.data)
+
+  const isLoading = exerciseQueries.some(query => query.isLoading);
+  const isError = exerciseQueries.some(query => query.isError);
 
   const updateSet = (exerciseIndex: number, setIndex: number, field: 'weight' | 'reps', value: number): void => {
     setExercises(prev => {
@@ -108,7 +114,7 @@ export const WorkoutTrackingPage: React.FC = () => {
     );
   }
 
-  if (!exercises.length || sets.isLoading) {
+  if (!exercises.length || isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
@@ -116,6 +122,15 @@ export const WorkoutTrackingPage: React.FC = () => {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="container mx-auto p-4 max-w-3xl">
+        <Alert variant="destructive">
+          <AlertDescription>Failed to load previous exercise data.</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto p-4 max-w-3xl">
       <div className="flex items-center gap-2 mb-6">
@@ -136,50 +151,54 @@ export const WorkoutTrackingPage: React.FC = () => {
       )}
 
       <div className="space-y-6">
-        {exercises.map((exercise, exerciseIndex) => (
-          <Card key={exercise.name} className="relative">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>{exercise.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-8 gap-4 font-medium text-sm text-gray-500">
-                  <div className="col-span-1">Set</div>
-                  <div className="col-span-3">Weight (kg)</div>
-                  <div className="col-span-3">Reps</div>
-                </div>
+        {exercises.map((exercise, exerciseIndex) => {
+          const exerciseData = exerciseQueries[exerciseIndex].data;
 
-                {exercise.sets.map((set, setIndex) => (
-                  <div key={setIndex} className="grid grid-cols-8 gap-4 items-center">
-                    <div className="col-span-1 text-sm font-medium">
-                      {setIndex + 1}
-                    </div>
-                    <div className="col-span-3">
-                      <Input
-                        type="number"
-                        value={exercise.name === sets.data.name ? sets.data.lastSet.weight : ''}
-                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', Number(e.target.value))}
-                        className="w-full"
-                        min="0"
-                        step="0.5"
-                      />
-                    </div>
-                    <div className="col-span-3">
-                      <Input
-                        type="number"
-                        value={exercise.name === sets.data.name ? sets.data.lastSet.reps : ''}
-                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', Number(e.target.value))}
-                        className="w-full"
-                        min="0"
-                        step="1"
-                      />
-                    </div>
+          return (
+            <Card key={exercise.name} className="relative">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>{exercise.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-8 gap-4 font-medium text-sm text-gray-500">
+                    <div className="col-span-1">Set</div>
+                    <div className="col-span-3">Weight (kg)</div>
+                    <div className="col-span-3">Reps</div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+
+                  {exercise.sets.map((set, setIndex) => (
+                    <div key={setIndex} className="grid grid-cols-8 gap-4 items-center">
+                      <div className="col-span-1 text-sm font-medium">
+                        {setIndex + 1}
+                      </div>
+                      <div className="col-span-3">
+                        <Input
+                          type="number"
+                          value={exerciseData?.lastSet?.weight || set.weight}
+                          onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', Number(e.target.value))}
+                          className="w-full"
+                          min="0"
+                          step="0.5"
+                        />
+                      </div>
+                      <div className="col-span-3">
+                        <Input
+                          type="number"
+                          value={exerciseData?.lastSet?.reps || set.reps}
+                          onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', Number(e.target.value))}
+                          className="w-full"
+                          min="0"
+                          step="1"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
 
         <Button
           onClick={handleSaveWorkout}
