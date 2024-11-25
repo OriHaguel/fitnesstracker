@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Workout, SavedUser, Exercise } from '../services/user/user.service.remote';
 import { isSameDate } from '@/services/util.service';
 import { getLastSetsById } from "@/services/tracking progress/progress.service"
-import { useQueries, useQuery } from "@tanstack/react-query"
+import { useQueries } from "@tanstack/react-query"
 
 interface ExerciseWithSets {
   name: string;
@@ -28,8 +28,10 @@ export const WorkoutTrackingPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithSets[]>([]);
+  console.log("🚀 ~ exercises:", exercises)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     const todaysWorkout = user.workouts.find(workout =>
@@ -38,30 +40,34 @@ export const WorkoutTrackingPage: React.FC = () => {
     setCurrentWorkout(todaysWorkout || null);
   }, [user.workouts]);
 
+  const exerciseQueries = useQueries({
+    queries: currentWorkout?.exercise?.map(ex => ({
+      queryKey: ['sets', ex.name],
+      queryFn: () => getLastSetsById(ex.name),
+      enabled: !!ex.name,
+    })) || []
+  });
+
+  const queriesReady = useMemo(() => ({
+    isSuccess: exerciseQueries.every(q => q.isSuccess),
+    data: exerciseQueries.map(q => q.data)
+  }), [exerciseQueries]);
+
   useEffect(() => {
-    if (currentWorkout?.exercise) {
-      const initialExercises = currentWorkout.exercise.map(ex => ({
+    if (currentWorkout?.exercise && queriesReady.isSuccess && !initialized) {
+      const initialExercises = currentWorkout.exercise.map((ex, index) => ({
         name: ex.name,
         sets: Array(ex.sets || 1).fill({
-          weight: ex.weight || 0,
-          reps: ex.reps || 0
+          weight: queriesReady.data[index]?.lastSet?.weight ?? ex.weight ?? 0,
+          reps: queriesReady.data[index]?.lastSet?.reps ?? ex.reps ?? 0
         })
       }));
       setExercises(initialExercises);
+      setInitialized(true);
     }
-  }, [currentWorkout]);
+  }, [currentWorkout, queriesReady.isSuccess, initialized]);
 
-  // Use useQueries to fetch last sets for each exercise
-  const exerciseQueries = useQueries({
-    queries: exercises.map(exercise => ({
-      queryKey: ['sets', exercise.name],
-      queryFn: () => getLastSetsById(exercise.name),
-      enabled: !!exercise.name,
-    }))
-  });
-
-
-  const isLoading = exerciseQueries.some(query => query.isLoading);
+  const isLoading = !exercises.length || exerciseQueries.some(query => query.isLoading);
   const isError = exerciseQueries.some(query => query.isError);
 
   const updateSet = (exerciseIndex: number, setIndex: number, field: 'weight' | 'reps', value: number): void => {
@@ -114,7 +120,7 @@ export const WorkoutTrackingPage: React.FC = () => {
     );
   }
 
-  if (!exercises.length || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
@@ -131,6 +137,7 @@ export const WorkoutTrackingPage: React.FC = () => {
       </div>
     );
   }
+
   return (
     <div className="container mx-auto p-4 max-w-3xl">
       <div className="flex items-center gap-2 mb-6">
@@ -151,54 +158,50 @@ export const WorkoutTrackingPage: React.FC = () => {
       )}
 
       <div className="space-y-6">
-        {exercises.map((exercise, exerciseIndex) => {
-          const exerciseData = exerciseQueries[exerciseIndex].data;
-
-          return (
-            <Card key={exercise.name} className="relative">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>{exercise.name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-8 gap-4 font-medium text-sm text-gray-500">
-                    <div className="col-span-1">Set</div>
-                    <div className="col-span-3">Weight (kg)</div>
-                    <div className="col-span-3">Reps</div>
-                  </div>
-
-                  {exercise.sets.map((set, setIndex) => (
-                    <div key={setIndex} className="grid grid-cols-8 gap-4 items-center">
-                      <div className="col-span-1 text-sm font-medium">
-                        {setIndex + 1}
-                      </div>
-                      <div className="col-span-3">
-                        <Input
-                          type="number"
-                          value={exerciseData?.lastSet?.weight || set.weight}
-                          onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', Number(e.target.value))}
-                          className="w-full"
-                          min="0"
-                          step="0.5"
-                        />
-                      </div>
-                      <div className="col-span-3">
-                        <Input
-                          type="number"
-                          value={exerciseData?.lastSet?.reps || set.reps}
-                          onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', Number(e.target.value))}
-                          className="w-full"
-                          min="0"
-                          step="1"
-                        />
-                      </div>
-                    </div>
-                  ))}
+        {exercises.map((exercise, exerciseIndex) => (
+          <Card key={exercise.name} className="relative">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>{exercise.name}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-8 gap-4 font-medium text-sm text-gray-500">
+                  <div className="col-span-1">Set</div>
+                  <div className="col-span-3">Weight (kg)</div>
+                  <div className="col-span-3">Reps</div>
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+
+                {exercise.sets.map((set, setIndex) => (
+                  <div key={setIndex} className="grid grid-cols-8 gap-4 items-center">
+                    <div className="col-span-1 text-sm font-medium">
+                      {setIndex + 1}
+                    </div>
+                    <div className="col-span-3">
+                      <Input
+                        type="number"
+                        value={set.weight || ''}
+                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', Number(e.target.value))}
+                        className="w-full"
+                        min="0"
+                        step="0.5"
+                      />
+                    </div>
+                    <div className="col-span-3">
+                      <Input
+                        type="number"
+                        value={set.reps || ''}
+                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', Number(e.target.value))}
+                        className="w-full"
+                        min="0"
+                        step="1"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
 
         <Button
           onClick={handleSaveWorkout}

@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, AxiosRequestConfig, AxiosError } from 'axios';
 import { SavedUser, Exercise } from './user/user.service.remote'
+import { ExerciseProgress } from './tracking progress/progress.service';
 const BASE_URL = process.env.NODE_ENV === 'production'
     ? '/api/'
     : '//localhost:3000/';
@@ -18,10 +19,10 @@ export const httpService = {
     get<T = any>(endpoint: string, data?: any): Promise<T> {
         return ajax<T>(endpoint, 'GET', data);
     },
-    post<T = any>(endpoint: string, data?: SavedUser | Exercise): Promise<T> {
+    post<T = any>(endpoint: string, data?: SavedUser | Exercise | ExerciseProgress): Promise<T> {
         return ajax<T>(endpoint, 'POST', data);
     },
-    put<T = any>(endpoint: string, data?: string | Exercise): Promise<T> {
+    put<T = any>(endpoint: string, data?: string | Exercise | ExerciseProgress): Promise<T> {
         return ajax<T>(endpoint, 'PUT', data);
     },
     delete<T = any>(endpoint: string, data?: string | object): Promise<T> {
