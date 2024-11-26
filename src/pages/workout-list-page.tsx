@@ -32,7 +32,7 @@ const WorkoutListPage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {user.workouts.map((workout: Workout) => (
+        {user.workouts?.map((workout: Workout) => (
           <Card key={workout._id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle>{workout.name}</CardTitle>

@@ -6,6 +6,7 @@ export interface SetsAndWeights {
 }
 export interface ExerciseProgress {
     name: string
+    ownerId: string
     sets: SetsAndWeights[]
 }
 
@@ -20,19 +21,19 @@ export async function getLastSetsById(exerciseId: string) {
     }
 }
 
-updateOrCreateSets({
-    name: "brdsfuh",
-    sets: [
-        {
-            weight: 50,
-            reps: 12
-        },
-        {
-            weight: 75,
-            reps: 10
-        }
-    ]
-})
+// updateOrCreateSets({
+//     name: "brdsfuh",
+//     sets: [
+//         {
+//             weight: 50,
+//             reps: 12
+//         },
+//         {
+//             weight: 75,
+//             reps: 10
+//         }
+//     ]
+// })
 
 async function updateSets(exercise: ExerciseProgress) {
     try {

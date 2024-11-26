@@ -28,13 +28,12 @@ export const WorkoutTrackingPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithSets[]>([]);
-  console.log("🚀 ~ exercises:", exercises)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    const todaysWorkout = user.workouts.find(workout =>
+    const todaysWorkout = user.workouts?.find(workout =>
       workout.date && isSameDate(new Date(workout.date))
     );
     setCurrentWorkout(todaysWorkout || null);
@@ -87,17 +86,7 @@ export const WorkoutTrackingPage: React.FC = () => {
     try {
       setSaveStatus('saving');
 
-      const savedExercises: Exercise[] = exercises.map(ex => ({
-        name: ex.name,
-        sets: ex.sets.length,
-        weight: ex.sets[ex.sets.length - 1].weight,
-        reps: ex.sets[ex.sets.length - 1].reps
-      }));
 
-      const updatedWorkout: Workout = {
-        ...currentWorkout,
-        exercise: savedExercises
-      };
 
       // TODO: Replace with API call
       // const response = await userService.updateWorkout(updatedWorkout);

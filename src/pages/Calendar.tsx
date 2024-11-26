@@ -133,7 +133,7 @@ export default function Calendar() {
       const date = addDays(startDate, i - startDayOfWeek)
       const isCurrentMonth = isSameMonth(date, currentDate)
       const isToday = isSameDay(date, new Date())
-      const dayWorkouts = user.workouts.filter(workout =>
+      const dayWorkouts = user.workouts?.filter(workout =>
         workout.date && isSameDay(new Date(workout.date), date)
       )
 
@@ -166,7 +166,7 @@ export default function Calendar() {
           </div>
 
           <div className="px-1 overflow-y-auto max-h-14 md:max-h-20">
-            {isCurrentMonth && dayWorkouts.map(workout => (
+            {isCurrentMonth && dayWorkouts?.map(workout => (
               <WorkoutCard key={workout._id} workout={workout} />
             ))}
           </div>
@@ -235,7 +235,7 @@ export default function Calendar() {
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-2">
-            {user.workouts.map((workout) => (
+            {user.workouts?.map((workout) => (
               <Button
                 key={workout._id}
                 variant="outline"

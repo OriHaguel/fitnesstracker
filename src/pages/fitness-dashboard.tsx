@@ -184,7 +184,7 @@ const FitnessDashboard = () => {
                   <LineChart data={user.weight}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                     <XAxis dataKey="date" fontSize={12} />
-                    <YAxis fontSize={12} domain={[user.weight[0] + 10, user.weight[user.weight.length - 1] - 10]} />
+                    <YAxis fontSize={12} domain={user?.weight && [user?.weight[0] + 10, user.weight[user.weight.length - 1] - 10]} />
                     {/* <YAxis fontSize={12} domain={[user.weight[0] + 10, user.weight[user.weight.length - 1] - 10]} /> */}
                     <Line type="monotone" dataKey="weight" stroke="#8884d8" />
                   </LineChart>

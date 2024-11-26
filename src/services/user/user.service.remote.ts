@@ -138,7 +138,7 @@ async function updateWorkout(workoutId: string, updateData: Workout) {
 
 async function login(credentials: SavedUser): Promise<SavedUser> {
 	try {
-		const user = await httpService.post('users/login', credentials)
+		const user = await httpService.post('auth/login', credentials)
 		if (!user) {
 			throw new AuthenticationError('Login failed - no user returned')
 		}
@@ -154,7 +154,7 @@ async function login(credentials: SavedUser): Promise<SavedUser> {
 async function signup(userCred: SavedUser): Promise<SavedUser> {
 
 	try {
-		const user = await httpService.post('users/signup', userCred)
+		const user = await httpService.post('auth/signup', userCred)
 		return saveLoggedinUser(user)
 
 	} catch (err) {
