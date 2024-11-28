@@ -28,11 +28,11 @@ export const WorkoutTrackingPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithSets[]>([]);
-  // console.log("🚀 ~ exercises:", exercises)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [initialized, setInitialized] = useState(false);
   const queryClient = useQueryClient();
+
   useEffect(() => {
     const todaysWorkout = user.workouts?.find(workout =>
       workout.date && isSameDate(new Date(workout.date))
@@ -86,13 +86,16 @@ export const WorkoutTrackingPage: React.FC = () => {
 
     try {
       setSaveStatus('saving');
-      exercises.map(exercise => {
+      const promises = exercises.map(async exercise => {
         const result: SetsAndWeights = getMaxSet({ sets: exercise.sets });
-        updateOrCreateSets({ name: exercise.name, sets: [result] })
-        // what.then(res => console.log(res))
-      })
+        await updateOrCreateSets({ name: exercise.name, sets: [result] });
+        // Invalidate the query for this exercise to trigger a refetch
+        await queryClient.invalidateQueries({ queryKey: ['sets', exercise.name] });
+      });
 
+      await Promise.all(promises);
       setSaveStatus('saved');
+      setInitialized(false); // Reset initialization to trigger data refresh
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
       setSaveStatus('error');
