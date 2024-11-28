@@ -5,10 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dumbbell } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Workout, SavedUser, Exercise } from '../services/user/user.service.remote';
+import { Workout, SavedUser } from '../services/user/user.service.remote';
 import { isSameDate } from '@/services/util.service';
-import { getLastSetsById } from "@/services/tracking progress/progress.service"
-import { useQueries } from "@tanstack/react-query"
+import { getLastSetsById, getMaxSet, SetsAndWeights, updateOrCreateSets } from "@/services/tracking progress/progress.service"
+import { useQueries, useQueryClient } from "@tanstack/react-query"
 
 interface ExerciseWithSets {
   name: string;
@@ -28,10 +28,11 @@ export const WorkoutTrackingPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithSets[]>([]);
+  // console.log("🚀 ~ exercises:", exercises)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [initialized, setInitialized] = useState(false);
-
+  const queryClient = useQueryClient();
   useEffect(() => {
     const todaysWorkout = user.workouts?.find(workout =>
       workout.date && isSameDate(new Date(workout.date))
@@ -85,11 +86,11 @@ export const WorkoutTrackingPage: React.FC = () => {
 
     try {
       setSaveStatus('saving');
-
-
-
-      // TODO: Replace with API call
-      // const response = await userService.updateWorkout(updatedWorkout);
+      exercises.map(exercise => {
+        const result: SetsAndWeights = getMaxSet({ sets: exercise.sets });
+        updateOrCreateSets({ name: exercise.name, sets: [result] })
+        // what.then(res => console.log(res))
+      })
 
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);

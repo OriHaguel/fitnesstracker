@@ -33,7 +33,7 @@ export function getMaxSet(data: { sets: SetsAndWeights[] }): SetsAndWeights {
     return sets[0];
 }
 
-// Example usage
+
 // const result: SetsAndWeights = getMaxSet({
 //     sets: [
 //         { weight: 80, reps: 1 },
@@ -57,7 +57,12 @@ async function updateSets(exercise: ExerciseProgress) {
         return null
     }
 }
-
+// createSets({
+//     name: 'Dumbbell Bench Press', sets: [{
+//         reps: 12,
+//         weight: 55
+//     }]
+// })
 async function createSets(exercise: ExerciseProgress) {
     try {
         const sets = await httpService.post(`progress/new`, exercise)

@@ -17,7 +17,8 @@ export const userService = {
 	addWorkout,
 	deleteWorkoutById,
 	updateWorkout,
-	deleteExerciseById
+	deleteExerciseById,
+	getAuthUser
 }
 
 export interface Exercise {
