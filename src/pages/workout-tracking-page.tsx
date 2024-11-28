@@ -28,6 +28,7 @@ export const WorkoutTrackingPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithSets[]>([]);
+  const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [initialized, setInitialized] = useState(false);
@@ -63,6 +64,16 @@ export const WorkoutTrackingPage: React.FC = () => {
         })
       }));
       setExercises(initialExercises);
+
+      // Initialize input values
+      const initialInputValues: { [key: string]: string } = {};
+      initialExercises.forEach((exercise, exerciseIndex) => {
+        exercise.sets.forEach((set, setIndex) => {
+          initialInputValues[`${exercise.name}-${setIndex}-weight`] = set.weight.toString();
+          initialInputValues[`${exercise.name}-${setIndex}-reps`] = set.reps.toString();
+        });
+      });
+      setInputValues(initialInputValues);
       setInitialized(true);
     }
   }, [currentWorkout, queriesReady.isSuccess, initialized]);
@@ -70,12 +81,22 @@ export const WorkoutTrackingPage: React.FC = () => {
   const isLoading = !exercises.length || exerciseQueries.some(query => query.isLoading);
   const isError = exerciseQueries.some(query => query.isError);
 
-  const updateSet = (exerciseIndex: number, setIndex: number, field: 'weight' | 'reps', value: number): void => {
+  const updateSet = (exerciseIndex: number, setIndex: number, field: 'weight' | 'reps', value: string): void => {
+    const exercise = exercises[exerciseIndex];
+    const inputKey = `${exercise.name}-${setIndex}-${field}`;
+
+    setInputValues(prev => ({
+      ...prev,
+      [inputKey]: value
+    }));
+
+    const numericValue = value === '' ? 0 : Number(value);
+
     setExercises(prev => {
       const newExercises = [...prev];
       newExercises[exerciseIndex].sets[setIndex] = {
         ...newExercises[exerciseIndex].sets[setIndex],
-        [field]: value
+        [field]: numericValue
       };
       return newExercises;
     });
@@ -89,13 +110,12 @@ export const WorkoutTrackingPage: React.FC = () => {
       const promises = exercises.map(async exercise => {
         const result: SetsAndWeights = getMaxSet({ sets: exercise.sets });
         await updateOrCreateSets({ name: exercise.name, sets: [result] });
-        // Invalidate the query for this exercise to trigger a refetch
         await queryClient.invalidateQueries({ queryKey: ['sets', exercise.name] });
       });
 
       await Promise.all(promises);
       setSaveStatus('saved');
-      setInitialized(false); // Reset initialization to trigger data refresh
+      setInitialized(false);
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
       setSaveStatus('error');
@@ -144,12 +164,6 @@ export const WorkoutTrackingPage: React.FC = () => {
         </Alert>
       )}
 
-      {saveStatus === 'saved' && (
-        <Alert className="mb-4">
-          <AlertDescription>Workout saved successfully!</AlertDescription>
-        </Alert>
-      )}
-
       <div className="space-y-6">
         {exercises.map((exercise, exerciseIndex) => (
           <Card key={exercise.name} className="relative">
@@ -172,8 +186,8 @@ export const WorkoutTrackingPage: React.FC = () => {
                     <div className="col-span-3">
                       <Input
                         type="number"
-                        value={set.weight || ''}
-                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', Number(e.target.value))}
+                        value={inputValues[`${exercise.name}-${setIndex}-weight`] || ''}
+                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
                         className="w-full"
                         min="0"
                         step="0.5"
@@ -182,8 +196,8 @@ export const WorkoutTrackingPage: React.FC = () => {
                     <div className="col-span-3">
                       <Input
                         type="number"
-                        value={set.reps || ''}
-                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', Number(e.target.value))}
+                        value={inputValues[`${exercise.name}-${setIndex}-reps`] || ''}
+                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
                         className="w-full"
                         min="0"
                         step="1"
