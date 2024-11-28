@@ -55,7 +55,6 @@ export class AuthenticationError extends Error {
 }
 
 function getUsers() {
-	console.log('yooo')
 	return httpService.get(`users`)
 }
 
@@ -63,6 +62,12 @@ async function getById(userId: string) {
 	const user = await httpService.get(`users/${userId}`)
 	return user
 }
+async function getAuthUser() {
+	const user = await httpService.get(`auth/user`)
+	return user
+}
+
+// getAuthUser().then(res => console.log(res.user))
 
 function remove(userId: string) {
 	return httpService.delete(`users/${userId}`)
@@ -125,16 +130,7 @@ async function updateWorkout(workoutId: string, updateData: Workout) {
 
 	}
 }
-// async function addExercise(_id: string, exercise: Exercise) {
-// 	const loggedinUser = getLoggedinUser()
-// 	const user = await httpService.post(`users/${loggedinUser?._id}/workouts/${_id}/exercise`, exercise)
 
-// 	// When admin updates other user's details, do not update loggedinUser
-// 	if (loggedinUser?._id === user._id) saveLoggedinUser(user)
-// 	console.log("🚀 ~ update ~ user:", user)
-
-// 	return user
-// }
 
 async function login(credentials: SavedUser): Promise<SavedUser> {
 	try {

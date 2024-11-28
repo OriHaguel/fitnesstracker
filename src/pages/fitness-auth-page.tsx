@@ -13,8 +13,8 @@ import { SavedUser } from '../services/user/user.service.remote';
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [credentials, setCredentials] = useState(userService.getEmptyCredentials())
-
   const navigate = useNavigate()
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, isSignup: boolean) => {
     try {
       e.preventDefault();
