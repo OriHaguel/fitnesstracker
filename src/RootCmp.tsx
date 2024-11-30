@@ -8,21 +8,35 @@ import WorkoutEditPage from './pages/workout-edit-page'
 import Home from './pages/Home'
 import { WorkoutTrackingPage } from './pages/workout-tracking-page'
 import { userService } from './services/user/user.service.remote'
+import { useEffect } from 'react'
 
 export function RootCmp() {
     const location = useLocation();
     const { data: user, isLoading } = userService.useAuthUser();
-
     const showNavbar = location.pathname !== '/' && location.pathname !== '/auth';
 
-    // Don't render anything while checking auth status to prevent flashes
+    useEffect(() => {
+        if (user) {
+
+            userService.saveLoggedinUser(user.user)
+        }
+    }, [user]);
+
+    // Show appropriate component while loading based on location
     if (isLoading) {
-        return null;
+        if (location.pathname === '/auth') {
+            return <AuthPage />;
+        }
+        if (location.pathname === '/') {
+            return <Home />;
+        }
+        return null
     }
 
     // Handle auth-required routes
     if ((location.pathname === '/' || location.pathname === '/auth') && user) {
         return <Navigate to="/dashboard" replace />;
+
     }
 
     return (

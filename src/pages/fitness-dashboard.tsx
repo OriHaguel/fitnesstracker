@@ -60,7 +60,7 @@ const FitnessDashboard = () => {
         {/* Rest of the component remains the same */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-xl font-bold">{`Welcome back, ${user.username}!`}</h1>
+            <h1 className="text-xl font-bold">{`Welcome back, ${user?.username}!`}</h1>
             <p className="text-sm text-gray-600">{getFormattedDate()}</p>
           </div>
           <div className="flex items-center space-x-3">
@@ -181,7 +181,7 @@ const FitnessDashboard = () => {
             <CardContent className="p-4 pt-0">
               <div className="h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={user.weight}>
+                  <LineChart data={user?.weight}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                     <XAxis dataKey="date" fontSize={12} />
                     <YAxis fontSize={12} domain={user?.weight && [user?.weight[0] + 10, user.weight[user.weight.length - 1] - 10]} />
