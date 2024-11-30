@@ -12,8 +12,9 @@ import { useEffect } from 'react'
 
 export function RootCmp() {
     const location = useLocation();
-    const { data: user } = userService.useAuthUser();
+    const { data: user, isLoading } = userService.useAuthUser();
     const showNavbar = location.pathname !== '/' && location.pathname !== '/auth';
+    const isPublicRoute = location.pathname === '/' || location.pathname === '/auth';
 
     useEffect(() => {
         if (user) {
@@ -21,17 +22,14 @@ export function RootCmp() {
         }
     }, [user]);
 
-    // Handle auth-required routes immediately
-    if ((location.pathname === '/' || location.pathname === '/auth') && user) {
-        return <Navigate to="/dashboard" replace />;
+    // Don't render anything until we know the auth state on public routes
+    if (isPublicRoute && isLoading) {
+        return null;
     }
 
-    // Public routes should render immediately
-    if (location.pathname === '/auth') {
-        return <AuthPage />;
-    }
-    if (location.pathname === '/') {
-        return <Home />;
+    // Once we know the auth state, handle redirects
+    if (isPublicRoute && user) {
+        return <Navigate to="/dashboard" replace />;
     }
 
     return (
