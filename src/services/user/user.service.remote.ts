@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { httpService } from '../../services/http.service'
 
 
@@ -18,7 +19,8 @@ export const userService = {
 	deleteWorkoutById,
 	updateWorkout,
 	deleteExerciseById,
-	getAuthUser
+	getAuthUser,
+	useAuthUser
 }
 
 export interface Exercise {
@@ -67,6 +69,17 @@ async function getAuthUser() {
 	const user = await httpService.get(`auth/user`)
 	return user
 }
+
+function useAuthUser() {
+	return useQuery({
+		queryKey: ['authUser'],
+		queryFn: getAuthUser,
+		staleTime: 1000 * 60 * 5, // 5 minutes
+		gcTime: 1000 * 60, // 10 minutes
+		refetchOnWindowFocus: false, // optional based on your needs
+	});
+}
+
 
 // getAuthUser().then(res => console.log(res.user))
 
