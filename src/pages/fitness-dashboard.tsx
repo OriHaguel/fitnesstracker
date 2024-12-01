@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts';
+// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Camera } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
@@ -147,7 +147,7 @@ const FitnessDashboard = () => {
             </CardHeader>
             <CardContent className="p-4 pt-0">
               <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
+                {/* <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={progressData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                     <XAxis dataKey="name" fontSize={12} />
@@ -155,7 +155,7 @@ const FitnessDashboard = () => {
                     <Bar dataKey="calories" fill="#8884d8" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="workouts" fill="#82ca9d" radius={[4, 4, 0, 0]} />
                   </BarChart>
-                </ResponsiveContainer>
+                </ResponsiveContainer> */}
               </div>
             </CardContent>
           </Card>
@@ -166,17 +166,16 @@ const FitnessDashboard = () => {
               <CardTitle className="text-sm font-medium">Weight Progress</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
-              <div className="h-[200px]">
+              {/* <div className="h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={user?.weight}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                     <XAxis dataKey="date" fontSize={12} />
                     <YAxis fontSize={12} domain={user?.weight && [user?.weight[0] + 10, user.weight[user.weight.length - 1] - 10]} />
-                    {/* <YAxis fontSize={12} domain={[user.weight[0] + 10, user.weight[user.weight.length - 1] - 10]} /> */}
                     <Line type="monotone" dataKey="weight" stroke="#8884d8" />
                   </LineChart>
                 </ResponsiveContainer>
-              </div>
+              </div> */}
             </CardContent>
           </Card>
 

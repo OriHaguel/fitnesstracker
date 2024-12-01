@@ -18,11 +18,11 @@ export function RootCmp() {
     const showNavbar = location.pathname !== '/' && location.pathname !== '/auth';
     const isPublicRoute = location.pathname === '/' || location.pathname === '/auth';
 
-    useEffect(() => {
-        if (user) {
-            initUser(user.user)
-        }
-    }, [user])
+    // useEffect(() => {
+    //     if (user) {
+    //         initUser(user.user)
+    //     }
+    // }, [user])
 
     // Don't render anything until we know the auth state on public routes
     if (isPublicRoute && isLoading) {
@@ -31,6 +31,7 @@ export function RootCmp() {
 
     // Once we know the auth state, handle redirects
     if (isPublicRoute && user) {
+        initUser(user.user)
         return <Navigate to="/dashboard" replace />;
     }
 
