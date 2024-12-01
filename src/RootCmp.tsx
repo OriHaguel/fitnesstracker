@@ -9,6 +9,8 @@ import Home from './pages/Home'
 import { WorkoutTrackingPage } from './pages/workout-tracking-page'
 import { userService } from './services/user/user.service.remote'
 import { useEffect } from 'react'
+import { initUser } from './store/actions/user.actions'
+
 
 export function RootCmp() {
     const location = useLocation();
@@ -18,9 +20,9 @@ export function RootCmp() {
 
     useEffect(() => {
         if (user) {
-            userService.saveLoggedinUser(user.user)
+            initUser(user.user)
         }
-    }, [user]);
+    }, [user])
 
     // Don't render anything until we know the auth state on public routes
     if (isPublicRoute && isLoading) {

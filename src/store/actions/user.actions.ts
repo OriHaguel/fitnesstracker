@@ -58,6 +58,18 @@ export async function logout() {
         throw err
     }
 }
+export function initUser(userToSave: SavedUser) {
+    try {
+        const user = userService.saveLoggedinUser(userToSave)
+        store.dispatch({
+            type: SET_USER,
+            user
+        })
+    } catch (err) {
+        console.log('Cannot logout', err)
+        throw err
+    }
+}
 
 export async function editExercise(userId: string, exercise: Exercise, method: 'put' | 'post') {
     try {

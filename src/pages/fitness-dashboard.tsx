@@ -31,19 +31,6 @@ const FitnessDashboard = () => {
     { name: 'Week 4', calories: 2800, workouts: 7 },
   ];
 
-  // const weightData = [
-  //   { date: 'Mon', weight: 85 },
-  //   { date: 'Tue', weight: 75 },
-  //   { date: 'Wed', weight: 74.9 },
-  //   { date: 'Thu', weight: 74.8 },
-  //   { date: 'Fri', weight: 74.7 },
-  //   { date: 'Fri', weight: 74.6 },
-  //   { date: 'Fri', weight: 74.5 },
-  //   { date: 'Fri', weight: 74.4 },
-  //   { date: 'Fri', weight: 74.3 },
-  //   { date: 'Fri', weight: 74.2 },
-  // ];
-
   function getFormattedDate(): string {
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: '2-digit', month: 'long' };
     const today = new Date();
