@@ -212,7 +212,7 @@ export const WorkoutTrackingPage: React.FC = () => {
 
         <Button
           onClick={handleSaveWorkout}
-          className="w-full"
+          className="w-full !mb-16"
           disabled={saveStatus === 'saving'}
         >
           {saveStatus === 'saving' ? 'Saving...' : 'Finish Workout'}

@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { httpService } from '../../services/http.service'
 
-
 const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
 
 export const userService = {
@@ -92,7 +91,6 @@ async function update(_id: string, exercise: Exercise, method: 'put' | 'post') {
 	const httpMethod = method === 'put' ? httpService.put : httpService.post
 	const user = await httpMethod(`users/${loggedinUser?._id}/workouts/${_id}/exercise`, exercise)
 
-	// When admin updates other user's details, do not update loggedinUser
 	if (loggedinUser?._id === user._id) saveLoggedinUser(user)
 	console.log("🚀 ~ update ~ user:", user)
 
@@ -182,10 +180,10 @@ async function logout() {
 function getLoggedinUser(): SavedUser | null {
 	try {
 		const user = sessionStorage.getItem(STORAGE_KEY_LOGGEDIN_USER);
-		return user ? JSON.parse(user) : null; // Cast to User type
+		return user ? JSON.parse(user) : null;
 	} catch (error) {
 		console.error('Failed to parse logged-in user data:', error);
-		return null; // Return null on error
+		return null;
 	}
 }
 

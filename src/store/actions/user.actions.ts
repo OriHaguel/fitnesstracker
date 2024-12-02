@@ -37,8 +37,6 @@ export async function signup(credentials: SavedUser) {
             type: SET_USER,
             user
         })
-
-        // socketService.login(user._id)
         return user
     } catch (err) {
         console.log('Cannot signup', err)
@@ -66,7 +64,7 @@ export function initUser(userToSave: SavedUser) {
             user
         })
     } catch (err) {
-        console.log('Cannot logout', err)
+        console.log('Cannot init user', err)
         throw err
     }
 }

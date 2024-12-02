@@ -39,12 +39,8 @@ const FitnessDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Improved Sidebar */}
 
-
-      {/* Main Content - adjusted margin for wider sidebar */}
       <div className="md:ml-20 p-6 ">
-        {/* Rest of the component remains the same */}
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-xl font-bold">{`Welcome back, ${user?.username}!`}</h1>
@@ -113,9 +109,7 @@ const FitnessDashboard = () => {
           </Card>
         </div>
 
-        {/* Main Grid */}
         <div className="grid grid-cols-12 gap-6">
-          {/* Workout Schedule */}
           <Card className="col-span-12 md:col-span-4">
             <CardHeader className="p-4">
               <CardTitle className="text-sm font-medium">Today's Workouts</CardTitle>
@@ -140,33 +134,12 @@ const FitnessDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Progress Chart */}
-          <Card className="col-span-12 md:col-span-8">
-            <CardHeader className="p-4">
-              <CardTitle className="text-sm font-medium">Monthly Progress</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <div className="h-[200px]">
-                {/* <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={progressData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                    <XAxis dataKey="name" fontSize={12} />
-                    <YAxis fontSize={12} />
-                    <Bar dataKey="calories" fill="#8884d8" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="workouts" fill="#82ca9d" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer> */}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Weight Tracking */}
-          <Card className="col-span-12 md:col-span-6">
+          {/* <Card className="col-span-12 md:col-span-6">
             <CardHeader className="p-4">
               <CardTitle className="text-sm font-medium">Weight Progress</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
-              {/* <div className="h-[200px]">
+              <div className="h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={user?.weight}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
@@ -175,9 +148,9 @@ const FitnessDashboard = () => {
                     <Line type="monotone" dataKey="weight" stroke="#8884d8" />
                   </LineChart>
                 </ResponsiveContainer>
-              </div> */}
+              </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Upcoming Sessions */}
           <Card className="col-span-12 md:col-span-6">

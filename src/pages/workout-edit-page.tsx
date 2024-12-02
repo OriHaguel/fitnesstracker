@@ -195,7 +195,6 @@ const WorkoutEditPage: React.FC = () => {
 
   if (!user) return null;
 
-
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <div className="flex items-center gap-4 mb-6">
@@ -302,7 +301,15 @@ const WorkoutEditPage: React.FC = () => {
         </Card>
       </div>
 
-      <div className="mb-6">
+      <Button
+        className="flex items-center gap-2 mb-8 ml-auto"
+        onClick={handleSave}
+      >
+        <Save size={16} />
+        Save Workout
+      </Button>
+
+      <div className="mb-20">
         <h2 className="text-xl font-bold mb-4">Weight Calculator</h2>
         <Card>
           <CardHeader>
@@ -368,6 +375,7 @@ const WorkoutEditPage: React.FC = () => {
                   </div>
                 )}
               </div>
+
 
               {calculatedWeight && workout.exercise.length > 0 && (
                 <div className="border-t pt-4 mt-4">
@@ -462,13 +470,7 @@ const WorkoutEditPage: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      <Button
-        className="flex items-center gap-2"
-        onClick={handleSave}
-      >
-        <Save size={16} />
-        Save Workout
-      </Button>
+
     </div>
   );
 };

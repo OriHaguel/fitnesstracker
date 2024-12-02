@@ -8,7 +8,6 @@ import WorkoutEditPage from './pages/workout-edit-page'
 import Home from './pages/Home'
 import { WorkoutTrackingPage } from './pages/workout-tracking-page'
 import { userService } from './services/user/user.service.remote'
-import { useEffect } from 'react'
 import { initUser } from './store/actions/user.actions'
 
 
@@ -18,19 +17,11 @@ export function RootCmp() {
     const showNavbar = location.pathname !== '/' && location.pathname !== '/auth';
     const isPublicRoute = location.pathname === '/' || location.pathname === '/auth';
 
-    // useEffect(() => {
-    //     if (user) {
-    //         initUser(user.user)
-    //     }
-    // }, [user])
-
-    // Don't render anything until we know the auth state on public routes
     if (isPublicRoute && isLoading) {
         return null;
     }
 
-    // Once we know the auth state, handle redirects
-    if (isPublicRoute && user) {
+    if (isPublicRoute && user?.user) {
         initUser(user.user)
         return <Navigate to="/dashboard" replace />;
     }

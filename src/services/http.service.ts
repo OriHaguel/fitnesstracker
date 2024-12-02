@@ -3,7 +3,7 @@ import { SavedUser, Exercise } from './user/user.service.remote'
 import { ExerciseProgress } from './tracking progress/progress.service';
 const BASE_URL = process.env.NODE_ENV === 'production'
     ? '/api/'
-    : '//localhost:3000/';
+    : '//localhost:3000/api/';
 
 
 
