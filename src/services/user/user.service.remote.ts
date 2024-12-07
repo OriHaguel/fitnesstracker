@@ -19,7 +19,8 @@ export const userService = {
 	updateWorkout,
 	deleteExerciseById,
 	getAuthUser,
-	useAuthUser
+	useAuthUser,
+	updateWeight
 }
 
 export interface Exercise {
@@ -154,7 +155,7 @@ async function updateWeight(updateData: { weight: number }) {
 
 	}
 }
-updateWeight({ weight: 65 })
+// updateWeight({ weight: 65 })
 
 async function login(credentials: SavedUser): Promise<SavedUser> {
 	try {

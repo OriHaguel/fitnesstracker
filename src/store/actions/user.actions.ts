@@ -101,9 +101,19 @@ export async function deleteExercise(workoutId: string, exerciseName: { name: st
         console.log('Cannot load user', err)
     }
 }
+
 export async function editWorkout(workoutId: string, updateData: any) {
     try {
         const user = await userService.updateWorkout(workoutId, updateData)
+        store.dispatch({ type: SET_USER, user })
+    } catch (err) {
+        console.log('Cannot load user', err)
+    }
+}
+
+export async function addWeight(weight: { weight: number }) {
+    try {
+        const user = await userService.updateWeight(weight)
         store.dispatch({ type: SET_USER, user })
     } catch (err) {
         console.log('Cannot load user', err)
