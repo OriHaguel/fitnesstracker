@@ -47,7 +47,14 @@ const processWeightData = (weights: Weight[]) => {
   );
 
   return {
-    labels: sortedData.map(w => new Date(w.date).toLocaleDateString()),
+    labels: sortedData.map(w => {
+      const date = new Date(w.date);
+      return date.toLocaleDateString('il', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    }),
     values: sortedData.map(w => w.weight)
   };
 };
