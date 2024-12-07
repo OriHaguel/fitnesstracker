@@ -9,6 +9,7 @@ import Home from './pages/Home'
 import { WorkoutTrackingPage } from './pages/workout-tracking-page'
 import { userService } from './services/user/user.service.remote'
 import { initUser } from './store/actions/user.actions'
+import { StatsPage } from './pages/workout-analytics-chartjs'
 
 
 export function RootCmp() {
@@ -39,6 +40,7 @@ export function RootCmp() {
                     <Route path='/workouts/:id' element={<WorkoutEditPage />} />
                     <Route path='/workouts/new' element={<WorkoutEditPage />} />
                     <Route path='/today' element={<WorkoutTrackingPage />} />
+                    <Route path='/graph' element={<StatsPage />} />
                 </Routes>
             </main>
         </div>

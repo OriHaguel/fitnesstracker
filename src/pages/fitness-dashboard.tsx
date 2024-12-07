@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Camera } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
@@ -24,12 +23,6 @@ const FitnessDashboard = () => {
     { day: 'Fri', workout: 'HIIT', completed: false }
   ];
 
-  const progressData = [
-    { name: 'Week 1', calories: 2200, workouts: 5 },
-    { name: 'Week 2', calories: 2500, workouts: 6 },
-    { name: 'Week 3', calories: 2300, workouts: 4 },
-    { name: 'Week 4', calories: 2800, workouts: 7 },
-  ];
 
   function getFormattedDate(): string {
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: '2-digit', month: 'long' };
@@ -133,24 +126,6 @@ const FitnessDashboard = () => {
               </div>
             </CardContent>
           </Card>
-
-          {/* <Card className="col-span-12 md:col-span-6">
-            <CardHeader className="p-4">
-              <CardTitle className="text-sm font-medium">Weight Progress</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={user?.weight}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                    <XAxis dataKey="date" fontSize={12} />
-                    <YAxis fontSize={12} domain={user?.weight && [user?.weight[0] + 10, user.weight[user.weight.length - 1] - 10]} />
-                    <Line type="monotone" dataKey="weight" stroke="#8884d8" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card> */}
 
           {/* Upcoming Sessions */}
           <Card className="col-span-12 md:col-span-6">

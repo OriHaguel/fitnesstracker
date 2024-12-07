@@ -142,7 +142,19 @@ async function updateWorkout(workoutId: string, updateData: Workout) {
 
 	}
 }
+async function updateWeight(updateData: { weight: number }) {
+	try {
+		const loggedinUser = getLoggedinUser()
+		const user = await httpService.put(`users/${loggedinUser?._id}/weight`, updateData)
+		if (loggedinUser?._id === user._id) saveLoggedinUser(user)
 
+		return user
+	} catch (error) {
+		console.log("🚀 ~ deleteWorkout ~ error:", error)
+
+	}
+}
+updateWeight({ weight: 65 })
 
 async function login(credentials: SavedUser): Promise<SavedUser> {
 	try {

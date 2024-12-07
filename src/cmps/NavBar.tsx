@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Dumbbell, Calendar, ChartBar, CalendarCheck } from 'lucide-react';
+import { Dumbbell, Calendar, ChartBar, CalendarCheck, BarChart } from 'lucide-react';
 // import { Home, Activity, Dumbbell, Calendar, ChartBar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -9,10 +9,11 @@ export function NavBar() {
     const [activeNav, setActiveNav] = useState('home');
     const navItems = [
         // { id: 'home', icon: Home, label: 'Home' },
-        { id: 'dashboard', icon: ChartBar, label: 'dashboard' },
+        { id: 'dashboard', icon: ChartBar, label: 'Dashboard' },
         { id: 'workouts', icon: Dumbbell, label: 'Workouts' },
         { id: 'calendar', icon: Calendar, label: 'Schedule' },
-        { id: 'today', icon: CalendarCheck, label: 'today' },
+        { id: 'today', icon: CalendarCheck, label: 'Today' },
+        { id: 'graph', icon: BarChart, label: 'Graph' },
         //add logout insted of home if you see fit
     ];
     return (

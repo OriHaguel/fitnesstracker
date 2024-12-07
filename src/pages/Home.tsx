@@ -80,12 +80,7 @@ export const Home = () => {
                 Your personal AI-powered fitness companion. Customized workouts, nutrition tracking, and real-time coaching - all in one app.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center px-4">
-                <a
-                  href="https://apps.apple.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group w-full sm:w-auto"
-                >
+                <Link to={'/auth'}>
                   <Button
                     size="lg"
                     className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-6 md:px-8 py-6 h-auto scale-100 hover:scale-105 w-full sm:w-auto"
@@ -93,7 +88,7 @@ export const Home = () => {
                     Download Now
                     <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </Button>
-                </a>
+                </Link>
                 <Button
                   size="lg"
                   variant="outline"
@@ -149,12 +144,7 @@ export const Home = () => {
         <div className="container mx-auto px-4 md:px-6 text-center relative">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 leading-tight">Start Your Journey Today</h2>
           <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-8 md:mb-12 max-w-2xl mx-auto text-blue-100 px-4">Join thousands of users who have transformed their lives with FitLife</p>
-          <a
-            href="https://apps.apple.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group inline-block w-full sm:w-auto px-4"
-          >
+          <Link to={'/auth'}>
             <Button
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 text-lg md:text-xl px-8 md:px-12 py-6 md:py-8 h-auto scale-100 hover:scale-105 w-full sm:w-auto"
@@ -162,7 +152,7 @@ export const Home = () => {
               Download Now
               <ArrowRight className="ml-2 h-5 w-5 md:h-6 md:w-6 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
-          </a>
+          </Link>
         </div>
       </section>
     </div>
