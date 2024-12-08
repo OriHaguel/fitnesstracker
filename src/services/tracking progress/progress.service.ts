@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query"
 import { httpService } from "../http.service"
 
 export interface SetsAndWeights {
@@ -20,7 +21,7 @@ export async function getLastSetsById(exerciseId: string) {
 
     }
 }
-export async function getAllSetsById(exerciseId: string) {
+async function getAllSetsById(exerciseId: string) {
     try {
         const sets = await httpService.get(`progress/${exerciseId}/all`)
         return sets
@@ -31,7 +32,15 @@ export async function getAllSetsById(exerciseId: string) {
     }
 }
 
-getAllSetsById('Dumbbell Bench Press').then(res => console.log(res))
+export function useGetAllSetsById(exerciseId: string) {
+    return useQuery({
+        queryKey: ['allSetsById'],
+        queryFn: () => getAllSetsById(exerciseId),
+        enabled: !!exerciseId,
+    });
+}
+
+// getAllSetsById('Dumbbell Bench Press').then(res => console.log(res))
 
 export function getMaxSet(data: { sets: SetsAndWeights[] }): SetsAndWeights {
     const { sets } = data;

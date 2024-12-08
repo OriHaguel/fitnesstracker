@@ -36,7 +36,7 @@ export interface Workout {
 	date?: Date
 	exercise: Exercise[]
 }
-interface Weight {
+export interface Weight {
 	weight: number
 	date: Date
 }
