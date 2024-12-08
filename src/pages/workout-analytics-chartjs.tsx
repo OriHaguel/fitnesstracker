@@ -20,7 +20,6 @@ import { SavedUser, Weight } from '@/services/user/user.service.remote';
 import { useState } from 'react';
 import { Scale, Dumbbell } from 'lucide-react';
 import { addWeight } from '@/store/actions/user.actions';
-import { useGetAllSetsById } from '@/services/tracking progress/progress.service';
 
 ChartJS.register(
   CategoryScale,
@@ -32,10 +31,17 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
 interface RootState {
   userModule: {
     user: SavedUser;
   };
+}
+
+interface ExerciseSet {
+  date: string;
+  weight: number;
+  reps: number;
 }
 
 const processWeightData = (weights: Weight[]) => {
@@ -195,126 +201,96 @@ const WeightTracker = ({ weightData }: { weightData: Weight[] }) => {
   );
 };
 
-interface ExerciseProgressChartProps {
-  exercises: string[];
-}
+// Demo data for exercise progress
+const demoData: ExerciseSet[] = [
+  { date: "2024-01-01", weight: 60, reps: 8 },
+  { date: "2024-01-08", weight: 62.5, reps: 8 },
+  { date: "2024-01-15", weight: 65, reps: 7 },
+  { date: "2024-01-22", weight: 67.5, reps: 6 },
+  { date: "2024-01-29", weight: 70, reps: 6 },
+];
 
-const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({ exercises }) => {
+const ExerciseProgressChart = ({ exercises }: { exercises: string[] }) => {
   const [selectedExercise, setSelectedExercise] = useState('');
-  const { data: exerciseData } = useGetAllSetsById(selectedExercise);
 
   const processExerciseData = () => {
-    if (!exerciseData || !Array.isArray(exerciseData) || exerciseData.length === 0) {
-      return { labels: [], weights: [], reps: [] };
-    }
+    // Using demo data for now - replace with actual data fetching
+    const sortedData = [...demoData].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
 
-    try {
-      const sortedData = [...exerciseData].sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-      );
-
-      return {
-        labels: sortedData.map((set) =>
-          new Date(set.date).toLocaleDateString("il", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-        ),
-        weights: sortedData.map((set) => set.weight),
-        reps: sortedData.map((set) => set.reps),
-      };
-    } catch (error) {
-      console.error("Error processing exercise data:", error);
-      return { labels: [], weights: [], reps: [] };
-    }
+    return {
+      labels: sortedData.map(set =>
+        new Date(set.date).toLocaleDateString("il", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric"
+        })
+      ),
+      volumes: sortedData.map(set => set.weight * set.reps)
+    };
   };
 
-  const { labels, weights, reps } = processExerciseData();
+  const { labels, volumes } = processExerciseData();
 
+  const latestVolume = volumes[volumes.length - 1];
+  const previousVolume = volumes[volumes.length - 2];
+  const volumeDiff = latestVolume - previousVolume;
+  const volumeTrend = volumeDiff !== 0 ? (volumeDiff > 0 ? 'increase' : 'decrease') : 'same';
 
   const data = {
     labels,
     datasets: [
       {
-        label: "Weight (kg)",
-        data: weights,
-        borderColor: "#2563eb",
-        backgroundColor: "rgba(37, 99, 235, 0.1)",
+        label: 'Volume (kg × reps)',
+        data: volumes,
+        borderColor: '#2563eb',
+        backgroundColor: 'rgba(37, 99, 235, 0.1)',
         tension: 0.3,
         pointRadius: 4,
-        pointBackgroundColor: "#2563eb",
-        pointBorderColor: "#ffffff",
+        pointBackgroundColor: '#2563eb',
+        pointBorderColor: '#ffffff',
         pointBorderWidth: 2,
-        yAxisID: "y",
-      },
-      {
-        label: "Reps",
-        data: reps,
-        borderColor: "#10b981",
-        backgroundColor: "rgba(16, 185, 129, 0.1)",
-        tension: 0.3,
-        pointRadius: 4,
-        pointBackgroundColor: "#10b981",
-        pointBorderColor: "#ffffff",
-        pointBorderWidth: 2,
-        yAxisID: "y1",
-      },
-    ],
+      }
+    ]
   };
 
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    interaction: {
-      mode: "index" as const,
-      intersect: false,
-    },
     plugins: {
       legend: {
-        position: "top" as const,
+        display: false
       },
       tooltip: {
-        backgroundColor: "#1e293b",
+        backgroundColor: '#1e293b',
         titleFont: {
           size: 14,
           family: "'Inter', sans-serif",
         },
         bodyFont: {
           size: 13,
-          family: "'Inter', sans-serif",
+          family: "'Inter', sans-serif"
         },
         padding: 12,
         cornerRadius: 8,
-        usePointStyle: true,
-      },
+        usePointStyle: true
+      }
     },
     scales: {
       y: {
-        type: "linear" as const,
-        display: true,
-        position: "left" as const,
-        title: {
-          display: true,
-          text: "Weight (kg)",
-        },
+        min: Math.min(...volumes) - 50,
+        max: Math.max(...volumes) + 50,
         grid: {
-          color: "rgba(0, 0, 0, 0.06)",
-        },
+          color: 'rgba(0, 0, 0, 0.06)'
+        }
       },
-      y1: {
-        type: "linear" as const,
-        display: true,
-        position: "right" as const,
-        title: {
-          display: true,
-          text: "Reps",
-        },
+      x: {
         grid: {
-          drawOnChartArea: false,
-        },
-      },
-    },
+          display: false
+        }
+      }
+    }
   };
 
   return (
@@ -347,26 +323,48 @@ const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({ exercises
           </div>
         </div>
 
+        {latestVolume && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="bg-white p-4 rounded-lg border">
+              <div className="text-sm font-medium text-slate-500">Current Volume</div>
+              <div className="text-2xl font-semibold text-slate-900">{latestVolume.toFixed(1)} kg×reps</div>
+            </div>
+            {previousVolume && (
+              <div className="bg-white p-4 rounded-lg border">
+                <div className="text-sm font-medium text-slate-500">Previous</div>
+                <div className="text-2xl font-semibold text-slate-900">{previousVolume.toFixed(1)} kg×reps</div>
+              </div>
+            )}
+            {volumeDiff !== 0 && (
+              <div className="bg-white p-4 rounded-lg border">
+                <div className="text-sm font-medium text-slate-500">Change</div>
+                <div className={`text-2xl font-semibold ${volumeTrend === 'increase' ? 'text-green-600' :
+                  volumeTrend === 'decrease' ? 'text-red-600' :
+                    'text-slate-900'
+                  }`}>
+                  {volumeDiff > 0 ? '+' : ''}{volumeDiff.toFixed(1)} kg×reps
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="bg-white rounded-lg">
           <div className="h-[300px] p-4">
             <Line data={data} options={options} />
           </div>
         </div>
-
       </CardContent>
     </Card>
   );
 };
 
-
 export const StatsPage = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
-  // user.workouts.map(workout => console.log(workout.exercise))
   const exerciseNames = user.workouts.flatMap(workout =>
     workout.exercise.map(exercise => exercise.name)
-  );
-  // useGetAllSetsById('Dumbbell Bench Press')
+  )
+
   return (
     <div className="w-full max-w-6xl mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-bold text-slate-900">Fitness Statistics</h1>
