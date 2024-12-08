@@ -34,7 +34,7 @@ async function getAllSetsById(exerciseId: string) {
 
 export function useGetAllSetsById(exerciseId: string) {
     return useQuery({
-        queryKey: ['allSetsById'],
+        queryKey: ['allSetsById', exerciseId],
         queryFn: () => getAllSetsById(exerciseId),
         enabled: !!exerciseId,
     });

@@ -202,19 +202,9 @@ const WeightTracker = ({ weightData }: { weightData: Weight[] }) => {
   );
 };
 
-// Demo data for exercise progress
-const demoData: ExerciseSet[] = [
-  { date: "2024-01-01", weight: 60, reps: 8 },
-  { date: "2024-01-08", weight: 62.5, reps: 8 },
-  { date: "2024-01-15", weight: 65, reps: 7 },
-  { date: "2024-01-22", weight: 67.5, reps: 6 },
-  { date: "2024-01-29", weight: 70, reps: 6 },
-];
-
 const ExerciseProgressChart = ({ exercises }: { exercises: string[] }) => {
   const [selectedExercise, setSelectedExercise] = useState('');
   const { data: exerciseData } = useGetAllSetsById(selectedExercise);
-
 
   const processExerciseData = () => {
     if (!exerciseData?.allSets || exerciseData.allSets.length === 0) {
