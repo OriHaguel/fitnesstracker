@@ -20,6 +20,7 @@ import { SavedUser, Weight } from '@/services/user/user.service.remote';
 import { useState } from 'react';
 import { Scale, Dumbbell } from 'lucide-react';
 import { addWeight } from '@/store/actions/user.actions';
+import { useGetAllSetsById } from '@/services/tracking progress/progress.service';
 
 ChartJS.register(
   CategoryScale,
@@ -212,10 +213,15 @@ const demoData: ExerciseSet[] = [
 
 const ExerciseProgressChart = ({ exercises }: { exercises: string[] }) => {
   const [selectedExercise, setSelectedExercise] = useState('');
+  const { data: exerciseData } = useGetAllSetsById(selectedExercise);
+
 
   const processExerciseData = () => {
-    // Using demo data for now - replace with actual data fetching
-    const sortedData = [...demoData].sort(
+    if (!exerciseData?.allSets || exerciseData.allSets.length === 0) {
+      return { labels: [], volumes: [] };
+    }
+
+    const sortedData = [...exerciseData.allSets].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
@@ -233,8 +239,8 @@ const ExerciseProgressChart = ({ exercises }: { exercises: string[] }) => {
 
   const { labels, volumes } = processExerciseData();
 
-  const latestVolume = volumes[volumes.length - 1];
-  const previousVolume = volumes[volumes.length - 2];
+  const latestVolume = volumes[volumes.length - 1] || 0;
+  const previousVolume = volumes[volumes.length - 2] || 0;
   const volumeDiff = latestVolume - previousVolume;
   const volumeTrend = volumeDiff !== 0 ? (volumeDiff > 0 ? 'increase' : 'decrease') : 'same';
 
@@ -279,8 +285,8 @@ const ExerciseProgressChart = ({ exercises }: { exercises: string[] }) => {
     },
     scales: {
       y: {
-        min: Math.min(...volumes) - 50,
-        max: Math.max(...volumes) + 50,
+        min: volumes.length ? Math.min(...volumes) - 50 : 0,
+        max: volumes.length ? Math.max(...volumes) + 50 : 100,
         grid: {
           color: 'rgba(0, 0, 0, 0.06)'
         }
@@ -323,13 +329,13 @@ const ExerciseProgressChart = ({ exercises }: { exercises: string[] }) => {
           </div>
         </div>
 
-        {latestVolume && (
+        {exerciseData?.allSets && exerciseData.allSets.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="bg-white p-4 rounded-lg border">
               <div className="text-sm font-medium text-slate-500">Current Volume</div>
               <div className="text-2xl font-semibold text-slate-900">{latestVolume.toFixed(1)} kg×reps</div>
             </div>
-            {previousVolume && (
+            {previousVolume !== 0 && (
               <div className="bg-white p-4 rounded-lg border">
                 <div className="text-sm font-medium text-slate-500">Previous</div>
                 <div className="text-2xl font-semibold text-slate-900">{previousVolume.toFixed(1)} kg×reps</div>
@@ -364,7 +370,6 @@ export const StatsPage = () => {
   const exerciseNames = user.workouts.flatMap(workout =>
     workout.exercise.map(exercise => exercise.name)
   )
-
   return (
     <div className="w-full max-w-6xl mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-bold text-slate-900">Fitness Statistics</h1>
