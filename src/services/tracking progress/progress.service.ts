@@ -20,8 +20,18 @@ export async function getLastSetsById(exerciseId: string) {
 
     }
 }
+export async function getAllSetsById(exerciseId: string) {
+    try {
+        const sets = await httpService.get(`progress/${exerciseId}/all`)
+        return sets
 
+    } catch (error) {
+        console.log("🚀 ~ getAllSetsById ~ error:", error)
 
+    }
+}
+
+getAllSetsById('Dumbbell Bench Press').then(res => console.log(res))
 
 export function getMaxSet(data: { sets: SetsAndWeights[] }): SetsAndWeights {
     const { sets } = data;

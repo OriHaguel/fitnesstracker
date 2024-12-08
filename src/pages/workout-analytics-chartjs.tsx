@@ -84,7 +84,6 @@ const WeightTracker = ({ weightData }: { weightData: Weight[] }) => {
         data: values,
         borderColor: '#2563eb',
         backgroundColor: 'rgba(37, 99, 235, 0.1)',
-        fill: true,
         tension: 0.3,
         pointRadius: 4,
         pointBackgroundColor: '#2563eb',
