@@ -4,6 +4,7 @@ import { httpService } from "../http.service"
 export interface SetsAndWeights {
     weight: number
     reps: number
+    date?: Date
 }
 export interface ExerciseProgress {
     name: string
@@ -50,15 +51,15 @@ export function getMaxSet(data: { sets: SetsAndWeights[] }): SetsAndWeights {
     sets.sort((a, b) => b.weight - a.weight || b.reps - a.reps);
 
     // Return the first set after sorting
-    return sets[0];
+    return { ...sets[0], date: new Date() };
 }
 
 
 // const result: SetsAndWeights = getMaxSet({
 //     sets: [
-//         { weight: 80, reps: 1 },
-//         { weight: 75, reps: 15 },
-//         { weight: 75, reps: 12 }
+//         { weight: 80, reps: 1, date: new Date() },
+//         { weight: 75, reps: 15, date: new Date() },
+//         { weight: 85, reps: 12, date: new Date() }
 //     ]
 // });
 
@@ -80,7 +81,8 @@ async function updateSets(exercise: ExerciseProgress) {
 // createSets({
 //     name: 'Dumbbell Bench Press', sets: [{
 //         reps: 12,
-//         weight: 55
+//         weight: 55,
+//         date: new Date()
 //     }]
 // })
 async function createSets(exercise: ExerciseProgress) {
@@ -95,6 +97,7 @@ async function createSets(exercise: ExerciseProgress) {
 }
 
 export async function updateOrCreateSets(exercise: ExerciseProgress) {
+    // console.log("🚀 ~ updateOrCreateSets ~ exercise:", exercise.sets[0].date)
     const sets = await updateSets(exercise)
     if (!sets) {
         // If update failed, try creating

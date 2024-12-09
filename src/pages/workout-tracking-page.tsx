@@ -15,6 +15,7 @@ interface ExerciseWithSets {
   sets: Array<{
     weight: number;
     reps: number;
+    date: Date
   }>;
 }
 
@@ -109,6 +110,7 @@ export const WorkoutTrackingPage: React.FC = () => {
       setSaveStatus('saving');
       const promises = exercises.map(async exercise => {
         const result: SetsAndWeights = getMaxSet({ sets: exercise.sets });
+        console.log("🚀 ~ promises ~ result:", result)
         await updateOrCreateSets({ name: exercise.name, sets: [result] });
         await queryClient.invalidateQueries({ queryKey: ['sets', exercise.name] });
       });
