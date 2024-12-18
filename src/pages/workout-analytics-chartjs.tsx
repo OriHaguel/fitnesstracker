@@ -39,12 +39,6 @@ interface RootState {
   };
 }
 
-interface ExerciseSet {
-  date: string;
-  weight: number;
-  reps: number;
-}
-
 const processWeightData = (weights: Weight[]) => {
   const sortedData = [...weights].sort((a, b) =>
     new Date(a.date).getTime() - new Date(b.date).getTime()
