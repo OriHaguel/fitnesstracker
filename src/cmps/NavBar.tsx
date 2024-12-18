@@ -45,7 +45,7 @@ export function NavBar() {
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="fitness-dashboard__sidebar-item mt-auto hover:bg-gray-100"
+                        className="fitness-dashboard__sidebar-item mt-auto"
                     >
                         <LogOut className="fitness-dashboard__sidebar-icon" />
                         <span className="fitness-dashboard__sidebar-label">Logout</span>
