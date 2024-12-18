@@ -355,7 +355,7 @@ export const StatsPage = () => {
     workout.exercise.map(exercise => exercise.name)
   )
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 space-y-6">
+    <div className="w-full max-w-6xl mx-auto p-6 space-y-6 mb-12">
       <h1 className="text-2xl font-bold text-slate-900">Fitness Statistics</h1>
       <ExerciseProgressChart exercises={exerciseNames} />
       <WeightTracker weightData={user.weight} />
