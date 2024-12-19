@@ -1,168 +1,165 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
+import { Scale, Dumbbell, PlusCircle, Calendar, TrendingUp } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Camera } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { useSelector } from 'react-redux';
+import { SavedUser, Workout } from '@/services/user/user.service.remote';
+import { addWeight } from '@/store/actions/user.actions';
+import { Link } from 'react-router-dom';
+import { isSameDate } from '@/services/util.service';
+interface RootState {
+  userModule: {
+    user: SavedUser;
+  };
+}
+export const FitnessDashboard = () => {
+  const user = useSelector((state: RootState) => state.userModule.user);
+  const [weight, setWeight] = useState('');
+  const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
 
-const Icon = ({ name }: { name: string }) => {
-  return <Camera className={`h-4 w-4 ${name === 'Trophy' ? 'text-yellow-400' :
-    name === 'Activity' ? 'text-red-400' :
-      name === 'Dumbbell' ? 'text-green-400' : ''
-    }`} />;
-};
+  useEffect(() => {
+    const todaysWorkout = user.workouts?.find(workout =>
+      workout.date && isSameDate(new Date(workout.date))
+    );
+    setCurrentWorkout(todaysWorkout || null);
+  }, [user.workouts]);
 
-const FitnessDashboard = () => {
-  const user = useSelector((state: any) => state.userModule.user);
-
-
-  const workoutData = [
-    { day: 'Mon', workout: 'Upper Body', completed: true },
-    { day: 'Tue', workout: 'Lower Body', completed: true },
-    { day: 'Wed', workout: 'Cardio', completed: false },
-    { day: 'Thu', workout: 'Core', completed: false },
-    { day: 'Fri', workout: 'HIIT', completed: false }
-  ];
-
-
-  function getFormattedDate(): string {
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: '2-digit', month: 'long' };
-    const today = new Date();
-    return today.toLocaleDateString('en-US', options);
-  }
+  const handleWeightSubmit = (ev: any) => {
+    ev.preventDefault();
+    addWeight({ weight: +weight })
+    setWeight('');
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-
-      <div className="md:ml-20 p-6 ">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-xl font-bold">{`Welcome back, ${user?.username}!`}</h1>
-            <p className="text-sm text-gray-600">{getFormattedDate()}</p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm">
-              <Camera className="h-4 w-4" />
-            </Button>
-            <img src="/api/placeholder/32/32" alt="Profile" className="w-8 h-8 rounded-full" />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+      {/* Top Navigation Bar */}
+      <nav className="bg-white shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="flex items-center">
+            <div className="flex items-center space-x-4">
+              <div className="bg-indigo-600 p-2 rounded-lg">
+                <Dumbbell className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900">FitTrack</h1>
+            </div>
           </div>
         </div>
+      </nav>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <Card className="bg-gradient-to-br from-blue-50 to-white">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-gray-600">Daily Goal</span>
-                <Icon name="Trophy" />
-              </div>
-              <div className="text-lg font-bold">75%</div>
-              <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '75%' }}></div>
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Date and Welcome Section */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user.username}!</h2>
+          <div className="flex items-center text-gray-600">
+            <Calendar className="h-5 w-5 mr-2" />
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </div>
+        </div>
+
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Card className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-100">Current Weight</p>
+                  <h3 className="text-3xl font-bold">{user.weight[user.weight.length - 1].weight || '--'} kg</h3>
+                </div>
+                <Scale className="h-8 w-8 opacity-75" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-red-50 to-white">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-gray-600">Calories</span>
-                <Icon name="Activity" />
-              </div>
-              <div className="text-lg font-bold">458 kcal</div>
-              <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                <div className="bg-red-400 h-1.5 rounded-full" style={{ width: '90%' }}></div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-green-50 to-white">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-gray-600">Streak</span>
-                <Icon name="Dumbbell" />
-              </div>
-              <div className="text-lg font-bold">12 days</div>
-              <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                <div className="bg-green-400 h-1.5 rounded-full" style={{ width: '80%' }}></div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-purple-50 to-white">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-gray-600">Steps</span>
-                <Icon name="Activity" />
-              </div>
-              <div className="text-lg font-bold">8,547</div>
-              <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                <div className="bg-purple-400 h-1.5 rounded-full" style={{ width: '70%' }}></div>
+          <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100">Weekly Workouts</p>
+                  <h3 className="text-3xl font-bold">4/5</h3>
+                </div>
+                <TrendingUp className="h-8 w-8 opacity-75" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid grid-cols-12 gap-6">
-          <Card className="col-span-12 md:col-span-4">
-            <CardHeader className="p-4">
-              <CardTitle className="text-sm font-medium">Today's Workouts</CardTitle>
+        {/* Weight Logging Section */}
+        <Card className="mb-8 border-none shadow-lg">
+          <CardHeader>
+            <CardTitle>Log Today's Weight</CardTitle>
+            <CardDescription>Keep track of your progress by logging your weight daily</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleWeightSubmit} className="flex gap-4">
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="Enter weight (kg)"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                className="max-w-[200px]"
+              />
+              <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">Log Weight</Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Action Cards */}
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card className="hover:shadow-xl transition-all duration-300 border-none shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <div className="bg-blue-100 p-2 rounded-lg">
+                  <Dumbbell className="h-5 w-5 text-blue-600" />
+                </div>
+                Today's Workout
+              </CardTitle>
+              <CardDescription>Ready to crush your fitness goals?</CardDescription>
             </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <div className="space-y-3">
-                {workoutData.slice(0, 3).map((day, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                    <div className="flex items-center">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${day.completed ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
-                        }`}>
-                        {day.day}
-                      </div>
-                      <span className="ml-3 text-sm font-medium">{day.workout}</span>
-                    </div>
-                    <Button variant={day.completed ? "secondary" : "outline"} size="sm" className="text-xs">
-                      {day.completed ? "Done" : "Start"}
-                    </Button>
-                  </div>
-                ))}
+            <CardContent>
+              <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                <h4 className="font-semibold mb-2">{currentWorkout?.name}</h4>
+                <p className="text-sm text-gray-600"> {currentWorkout?.exercise.length} exercises</p>
               </div>
+              <Link to={'/today'}>
+                <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                  Start Workout
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
-          {/* Upcoming Sessions */}
-          <Card className="col-span-12 md:col-span-6">
-            <CardHeader className="p-4">
-              <CardTitle className="text-sm font-medium">Upcoming Sessions</CardTitle>
+          <Card className="hover:shadow-xl transition-all duration-300 border-none shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <div className="bg-purple-100 p-2 rounded-lg">
+                  <PlusCircle className="h-5 w-5 text-purple-600" />
+                </div>
+                Create New Workout
+              </CardTitle>
+              <CardDescription>Design your perfect training routine</CardDescription>
             </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-sm">HIIT Training</p>
-                    <p className="text-xs text-gray-600">with Coach Mike</p>
-                  </div>
-                  <Button size="sm" className="text-xs">Join Now</Button>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-sm">Yoga Flow</p>
-                    <p className="text-xs text-gray-600">with Sarah</p>
-                  </div>
-                  <Button variant="outline" size="sm" className="text-xs">In 2h</Button>
-                </div>
+            <CardContent>
+              <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                <h4 className="font-semibold mb-2">Quick Start</h4>
+                <p className="text-sm text-gray-600">Customize your workout or choose a template!</p>
               </div>
+              <Link to={'/workouts/new'}>
+                <Button variant="outline" className="w-full border-purple-200 text-purple-700 hover:bg-purple-50">
+                  Create Workout
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
-
-        {/* Alert */}
-        <Alert className="mt-6 mb-16  md:mb-0">
-          <Camera className="h-4 w-4" />
-          <AlertDescription className="text-sm">
-            You're on track to reach your weekly goal! Just 2 more workouts to go.
-          </AlertDescription>
-        </Alert>
       </div>
     </div>
   );
 };
-
-export default FitnessDashboard;

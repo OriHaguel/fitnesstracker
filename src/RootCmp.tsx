@@ -1,5 +1,4 @@
 import { Routes, Route, useLocation, Navigate } from 'react-router'
-import FitnessDashboard from './pages/fitness-dashboard'
 import Calendar from './pages/Calendar'
 import { NavBar } from './cmps/NavBar'
 import AuthPage from './pages/fitness-auth-page'
@@ -10,6 +9,7 @@ import { WorkoutTrackingPage } from './pages/workout-tracking-page'
 import { userService } from './services/user/user.service.remote'
 import { initUser } from './store/actions/user.actions'
 import { StatsPage } from './pages/workout-analytics-chartjs'
+import { FitnessDashboard } from './pages/fitness-dashboard'
 
 
 export function RootCmp() {
