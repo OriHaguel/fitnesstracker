@@ -112,7 +112,7 @@ export const FitnessDashboard = () => {
         </Card>
 
         {/* Action Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
           <Card className="hover:shadow-xl transition-all duration-300 border-none shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
