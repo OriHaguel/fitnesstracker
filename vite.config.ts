@@ -12,6 +12,7 @@ export default defineConfig({
     },
   },
   build: {
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       plugins: [visualizer({ open: true })], // Automatically open the report in your browser
     },

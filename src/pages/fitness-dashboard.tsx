@@ -8,6 +8,7 @@ import { SavedUser, Workout } from '@/services/user/user.service.remote';
 import { addWeight } from '@/store/actions/user.actions';
 import { Link } from 'react-router-dom';
 import { isSameDate } from '@/services/util.service';
+
 interface RootState {
   userModule: {
     user: SavedUser;
