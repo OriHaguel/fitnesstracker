@@ -28,6 +28,7 @@ export interface Exercise {
 	weight?: number
 	reps?: number
 	name: string
+	muscleGroup?: string
 }
 export interface Workout {
 	_id?: string

@@ -26,14 +26,14 @@ import {
 } from "@/components/ui/select";
 import { WorkoutDetail } from '@/cmps/WorkoutDetail';
 import { useSelector } from 'react-redux';
-import { Exercise, Workout } from '../services/user/user.service.remote';
+import { Exercise as BaseExercise, Workout } from '../services/user/user.service.remote';
 import { editExercise, createWorkout, deleteExercise } from '@/store/actions/user.actions';
-// import ExerciseCombobox from '@/cmps/workout-edit';
-
-import data from '../../data/exersice.json'
-import ExerciseCombobox from '@/cmps/workout-edit';
 import { ComboboxDemo } from '@/cmps/testData';
-// console.log(data.filter(item => item.level.includes('beginner') && item.primaryMuscles.includes('biceps')))
+
+// Extend the base Exercise type to include muscleGroup
+interface Exercise extends BaseExercise {
+  muscleGroup?: string;
+}
 
 export interface RootState {
   userModule: {
@@ -42,73 +42,6 @@ export interface RootState {
     };
   };
 }
-
-const actualData = [
-  {
-    name: "3/4 Sit-Up",
-    force: "pull",
-    level: "beginner",
-    mechanic: "compound",
-    equipment: "body only",
-    primaryMuscles: ["abdominals"],
-    secondaryMuscles: [],
-    instructions: [
-      "Lie down on the floor and secure your feet. Your legs should be bent at the knees.",
-      "Place your hands behind or to the side of your head. You will begin with your back on the ground. This will be your starting position.",
-      "Flex your hips and spine to raise your torso toward your knees.",
-      "At the top of the contraction your torso should be perpendicular to the ground. Reverse the motion, going only ¾ of the way down.",
-      "Repeat for the recommended amount of repetitions."
-    ],
-    category: "strength",
-    images: [
-      "3_4_Sit-Up/0.jpg",
-      "3_4_Sit-Up/1.jpg"
-    ],
-    id: "3_4_Sit-Up"
-  },
-  {
-    name: "90/90 Hamstring",
-    force: "push",
-    level: "beginner",
-    mechanic: null,
-    equipment: "body only",
-    primaryMuscles: ["hamstrings"],
-    secondaryMuscles: ["calves"],
-    instructions: [
-      "Lie on your back, with one leg extended straight out.",
-      "With the other leg, bend the hip and knee to 90 degrees. You may brace your leg with your hands if necessary. This will be your starting position.",
-      "Extend your leg straight into the air, pausing briefly at the top. Return the leg to the starting position.",
-      "Repeat for 10-20 repetitions, and then switch to the other leg."
-    ],
-    category: "stretching",
-    images: [
-      "90_90_Hamstring/0.jpg",
-      "90_90_Hamstring/1.jpg"
-    ],
-    id: "90_90_Hamstring"
-  },
-  {
-    name: "Ab Crunch Machine",
-    force: "pull",
-    level: "intermediate",
-    mechanic: "isolation",
-    equipment: "machine",
-    primaryMuscles: ["abdominals"],
-    secondaryMuscles: [],
-    instructions: [
-      "Select a light resistance and sit down on the ab machine placing your feet under the pads provided and grabbing the top handles. Your arms should be bent at a 90 degree angle as you rest the triceps on the pads provided. This will be your starting position.",
-      "At the same time, begin to lift the legs up as you crunch your upper torso. Breathe out as you perform this movement. Tip: Be sure to use a slow and controlled motion. Concentrate on using your abs to move the weight while relaxing your legs and feet.",
-      "After a second pause, slowly return to the starting position as you breathe in.",
-      "Repeat the movement for the prescribed amount of repetitions."
-    ],
-    category: "strength",
-    images: [
-      "Ab_Crunch_Machine/0.jpg",
-      "Ab_Crunch_Machine/1.jpg"
-    ],
-    id: "Ab_Crunch_Machine"
-  }
-];
 
 interface CalcInput {
   currentWeight: string;
@@ -122,6 +55,25 @@ const WorkoutEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const user = useSelector((state: RootState) => state.userModule.user);
 
+  const muscleGroups = [
+    "abdominals",
+    "abductors",
+    "adductors",
+    "biceps",
+    "calves",
+    "chest",
+    "forearms",
+    "glutes",
+    "hamstrings",
+    "lats",
+    "lower_back",
+    "middle_back",
+    "neck",
+    "quadriceps",
+    "traps",
+    "triceps"
+  ];
+
   const [workout, setWorkout] = useState<Workout>({
     name: '',
     type: '',
@@ -133,15 +85,18 @@ const WorkoutEditPage: React.FC = () => {
     sets: 0,
     reps: 0,
     weight: 0,
+    muscleGroup: ''
   });
+  console.log("🚀 ~ newExercise:", newExercise)
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
   const [editForm, setEditForm] = useState<Exercise>({
+    name: '',
     sets: 0,
     reps: 0,
     weight: 0,
-    name: ''
+    muscleGroup: ''
   });
 
   const [calcInput, setCalcInput] = useState<CalcInput>({
@@ -178,7 +133,8 @@ const WorkoutEditPage: React.FC = () => {
       sets: exercise.sets || 0,
       reps: exercise.reps || 0,
       weight: exercise.weight || 0,
-      name: exercise.name || ''
+      name: exercise.name || '',
+      muscleGroup: exercise.muscleGroup || ''
     });
     setIsEditModalOpen(true);
   };
@@ -216,7 +172,8 @@ const WorkoutEditPage: React.FC = () => {
         name: '',
         sets: 0,
         reps: 0,
-        weight: 0
+        weight: 0,
+        muscleGroup: ''
       });
     }
   };
@@ -290,6 +247,7 @@ const WorkoutEditPage: React.FC = () => {
                   <div className="flex-1">
                     <h3 className="font-bold">{exercise.name}</h3>
                     <p className="text-sm text-gray-600">
+                      {exercise.muscleGroup && `${exercise.muscleGroup} - `}
                       {exercise.sets} sets × {exercise.reps} reps @ {exercise.weight}kg
                     </p>
                   </div>
@@ -311,42 +269,33 @@ const WorkoutEditPage: React.FC = () => {
                   >
                     <Trash2 size={16} />
                   </Button>
-
                 </div>
               ))}
-
               <div className="border-t pt-4">
                 <h3 className="font-bold mb-2">Add New Exercise</h3>
                 <div className="space-y-2">
-                  {/* <Input
-                    type="text"
-                    placeholder="Exercise Name"
-                    value={newExercise.name}
-                    onChange={(e) => setNewExercise({
-                      ...newExercise,
-                      name: e.target.value
-                    })}
-                    className="w-full"
-                  /> */}
-                  {/* <ExerciseCombobox
-                    exercises={actualData}  // data should be an array
-                    value={newExercise.name}
-                    onExerciseSelect={(exerciseName) =>
-                      setNewExercise({
-                        ...newExercise,
-                        name: exerciseName
-                      })
-                    }
-                  /> */}
-                  <ComboboxDemo />
-                  {/* <ExerciseCombobox value={data.filter(item => item.level.includes('beginner') && item.primaryMuscles.includes('biceps'))} /> */}
-                  {/* <ExerciseCombobox
-                    value={newExercise.name}
-                    onChange={(e) => setNewExercise({
-                      ...newExercise,
-                      name: e.target.value
-                    })}
-                  /> */}
+                  <div className="flex gap-2 mb-2">
+                    <Select
+                      value={newExercise.muscleGroup}
+                      onValueChange={(value) => setNewExercise(prev => ({
+                        ...prev,
+                        muscleGroup: value
+                      }))}
+                    >
+                      <SelectTrigger className="w-[12.5rem]">
+                        <SelectValue placeholder="Muscle Group" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {muscleGroups.map(group => (
+                          <SelectItem key={group} value={group}>
+                            {group}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <ComboboxDemo />
+                  </div>
                   <div className="flex gap-2">
                     <Input
                       type="number"
@@ -466,7 +415,6 @@ const WorkoutEditPage: React.FC = () => {
                   </div>
                 )}
               </div>
-
 
               {calculatedWeight && workout.exercise.length > 0 && (
                 <div className="border-t pt-4 mt-4">
