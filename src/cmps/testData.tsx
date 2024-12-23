@@ -83,9 +83,9 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                     <CommandList>
                         <CommandEmpty>No exercise found.</CommandEmpty>
                         <CommandGroup>
-                            {exercises.map((exercise) => (
+                            {exercises.map((exercise, index) => (
                                 <CommandItem
-                                    key={exercise}
+                                    key={`${exercise}-${index}`}
                                     value={exercise}
                                     onSelect={(currentValue) => {
                                         setNewExercise(prev => ({
