@@ -87,7 +87,7 @@ const WorkoutEditPage: React.FC = () => {
     weight: 0,
     muscleGroup: ''
   });
-  console.log("🚀 ~ newExercise:", newExercise)
+  // console.log("🚀 ~ newExercise:", newExercise)
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
@@ -294,7 +294,10 @@ const WorkoutEditPage: React.FC = () => {
                       </SelectContent>
                     </Select>
 
-                    <ComboboxDemo />
+                    <ComboboxDemo
+                      newExercise={newExercise}
+                      setNewExercise={setNewExercise}
+                    />
                   </div>
                   <div className="flex gap-2">
                     <Input
