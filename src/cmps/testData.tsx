@@ -15,7 +15,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import frameworks from '../../data/exersice.json'
+import { getExerciseByName } from "@/services/tracking progress/progress.service"
 
 interface ComboboxDemoProps {
     newExercise: {
@@ -35,9 +35,34 @@ interface ComboboxDemoProps {
 }
 
 export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps) {
-    console.log("🚀 ~ ComboboxDemo ~ newExercise:", newExercise)
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState("")
+    const [exercises, setExercises] = React.useState<string[]>([])
+
+    async function getExerciseNames(): Promise<string[] | undefined> {
+        try {
+            if (!newExercise.muscleGroup) return
+            return await getExerciseByName(newExercise?.muscleGroup)
+        } catch (error) {
+            console.log("🚀 ~ getExerciseNames ~ error:", error)
+
+        }
+    }
+
+    React.useEffect(() => {
+        async function loadExercises() {
+            try {
+                if (!newExercise.muscleGroup) return
+                const names = await getExerciseNames()
+                if (names) {
+                    setExercises(names)
+                }
+            } catch (error) {
+                console.error("Error loading exercises:", error)
+            }
+        }
+
+        loadExercises()
+    }, [newExercise.muscleGroup])
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -48,9 +73,7 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                     aria-expanded={open}
                     className="w-[200px] justify-between"
                 >
-                    {value
-                        ? frameworks.find((framework) => framework.name === value)?.name
-                        : "Select exercise..."}
+                    {newExercise.name || "Select exercise..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -60,15 +83,14 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                     <CommandList>
                         <CommandEmpty>No exercise found.</CommandEmpty>
                         <CommandGroup>
-                            {frameworks.map((framework) => (
+                            {exercises.map((exercise) => (
                                 <CommandItem
-                                    key={framework.name}
-                                    value={framework.name}
+                                    key={exercise}
+                                    value={exercise}
                                     onSelect={(currentValue) => {
-                                        setValue(currentValue === value ? "" : currentValue)
                                         setNewExercise(prev => ({
                                             ...prev,
-                                            name: currentValue === value ? "" : currentValue
+                                            name: currentValue === newExercise.name ? "" : currentValue
                                         }))
                                         setOpen(false)
                                     }}
@@ -76,10 +98,10 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            value === framework.name ? "opacity-100" : "opacity-0"
+                                            newExercise.name === exercise ? "opacity-100" : "opacity-0"
                                         )}
                                     />
-                                    {framework.name}
+                                    {exercise}
                                 </CommandItem>
                             ))}
                         </CommandGroup>
@@ -91,3 +113,4 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
 }
 
 export default ComboboxDemo
+

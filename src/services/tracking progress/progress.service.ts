@@ -105,3 +105,15 @@ export async function updateOrCreateSets(exercise: ExerciseProgress) {
     }
     return sets
 }
+
+export async function getExerciseByName(exerciseName: string) {
+    try {
+        const sets = await httpService.get(`${exerciseName}`)
+        return sets
+
+    } catch (error) {
+        console.log("🚀 ~ getAllSetsById ~ error:", error)
+
+    }
+}
+// getExerciseByName('triceps').then(rep => console.log(rep))

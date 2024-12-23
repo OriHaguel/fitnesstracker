@@ -29,8 +29,6 @@ import { useSelector } from 'react-redux';
 import { Exercise as BaseExercise, Workout } from '../services/user/user.service.remote';
 import { editExercise, createWorkout, deleteExercise } from '@/store/actions/user.actions';
 import { ComboboxDemo } from '@/cmps/testData';
-
-// Extend the base Exercise type to include muscleGroup
 interface Exercise extends BaseExercise {
   muscleGroup?: string;
 }
@@ -87,7 +85,6 @@ const WorkoutEditPage: React.FC = () => {
     weight: 0,
     muscleGroup: ''
   });
-  // console.log("🚀 ~ newExercise:", newExercise)
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
