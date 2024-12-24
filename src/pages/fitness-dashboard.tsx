@@ -20,11 +20,11 @@ export const FitnessDashboard = () => {
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
 
   useEffect(() => {
-    const todaysWorkout = user.workouts?.find(workout =>
+    const todaysWorkout = user?.workouts?.find(workout =>
       workout.date && isSameDate(new Date(workout.date))
     );
     setCurrentWorkout(todaysWorkout || null);
-  }, [user.workouts]);
+  }, [user?.workouts]);
 
   const handleWeightSubmit = (ev: any) => {
     ev.preventDefault();
@@ -52,7 +52,7 @@ export const FitnessDashboard = () => {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Date and Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user.username}!</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.username}!</h2>
           <div className="flex items-center text-gray-600">
             <Calendar className="h-5 w-5 mr-2" />
             {new Date().toLocaleDateString('en-US', {
@@ -71,7 +71,7 @@ export const FitnessDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100">Current Weight</p>
-                  <h3 className="text-3xl font-bold">{user.weight[user.weight.length - 1].weight || '--'} kg</h3>
+                  <h3 className="text-3xl font-bold">{user?.weight[user.weight.length - 1].weight || '--'} kg</h3>
                 </div>
                 <Scale className="h-8 w-8 opacity-75" />
               </div>

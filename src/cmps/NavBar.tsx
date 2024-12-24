@@ -19,6 +19,7 @@ export function NavBar() {
         try {
             logout()
             navigate('/')
+
         } catch (error) {
             console.log("🚀 ~ handleLogout ~ error:", error)
         }

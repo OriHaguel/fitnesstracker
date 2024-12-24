@@ -266,7 +266,7 @@ export const WorkoutTrackingPage: React.FC = () => {
 
         <Button
           onClick={handleSaveWorkout}
-          className="w-full mt-6 mb-16 h-12 text-lg font-medium bg-blue-500 hover:bg-blue-600"
+          className="finish-workout w-full h-12 text-lg font-medium bg-blue-500 hover:bg-blue-600"
           disabled={saveStatus === 'saving'}
         >
           {saveStatus === 'saving' ? (
