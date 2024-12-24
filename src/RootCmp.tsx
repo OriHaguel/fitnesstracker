@@ -3,13 +3,14 @@ import Calendar from './pages/Calendar'
 import { NavBar } from './cmps/NavBar'
 import AuthPage from './pages/fitness-auth-page'
 import WorkoutListPage from './pages/workout-list-page'
-import WorkoutEditPage from './pages/workout-edit-page'
+import WorkoutEditPage, { RootState } from './pages/workout-edit-page'
 import Home from './pages/Home'
 import { WorkoutTrackingPage } from './pages/workout-tracking-page'
 import { userService } from './services/user/user.service.remote'
 import { initUser } from './store/actions/user.actions'
 import { StatsPage } from './pages/workout-analytics-chartjs'
 import { FitnessDashboard } from './pages/fitness-dashboard'
+import { useSelector } from 'react-redux'
 
 
 export function RootCmp() {
@@ -17,12 +18,13 @@ export function RootCmp() {
     const { data: user, isLoading } = userService.useAuthUser();
     const showNavbar = location.pathname !== '/' && location.pathname !== '/auth';
     const isPublicRoute = location.pathname === '/' || location.pathname === '/auth';
+    const userFromLocal = useSelector((state: RootState) => state.userModule.user);
 
     if (isPublicRoute && isLoading) {
         return null;
     }
 
-    if (isPublicRoute && user?.user) {
+    if (isPublicRoute && user?.user && !userFromLocal) {
         initUser(user.user)
         return <Navigate to="/dashboard" replace />;
     }
