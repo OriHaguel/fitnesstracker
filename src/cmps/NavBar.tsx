@@ -18,7 +18,7 @@ export function NavBar() {
         // Add your logout logic here
         try {
             logout()
-            navigate('/')
+            navigate('/auth')
 
         } catch (error) {
             console.log("🚀 ~ handleLogout ~ error:", error)

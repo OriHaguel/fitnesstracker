@@ -18,7 +18,6 @@ export const FitnessDashboard = () => {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [weight, setWeight] = useState('');
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
-
   useEffect(() => {
     const todaysWorkout = user?.workouts?.find(workout =>
       workout.date && isSameDate(new Date(workout.date))

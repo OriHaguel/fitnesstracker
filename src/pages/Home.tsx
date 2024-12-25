@@ -10,10 +10,12 @@ export const Home = () => {
   const isPublicRoute = location.pathname === '/' || location.pathname === '/auth';
   const { data: user, isLoading } = userService.useAuthUser();
 
+
   useEffect(() => {
     if (isPublicRoute && user?.user) {
       initUser(user.user);
     }
+
   }, [isPublicRoute, user]);
 
   if (isPublicRoute && isLoading) {

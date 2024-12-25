@@ -56,7 +56,7 @@ export async function logout() {
         throw err
     }
 }
-export function initUser(userToSave: SavedUser) {
+export function initUser(userToSave: any) {
     try {
         const user = userService.saveLoggedinUser(userToSave)
         store.dispatch({

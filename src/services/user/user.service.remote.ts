@@ -75,9 +75,9 @@ function useAuthUser() {
 	return useQuery({
 		queryKey: ['authUser'],
 		queryFn: getAuthUser,
-		staleTime: 1000 * 60 * 5, // 5 minutes
-		gcTime: 1000 * 60, // 10 minutes
-		refetchOnWindowFocus: false, // optional based on your needs
+		// staleTime: 1000 * 60 * 5, // 5 minutes
+		// gcTime: 1000 * 60, // 10 minutes
+		// refetchOnWindowFocus: false, // optional based on your needs
 	});
 }
 // getAuthUser().then(res => console.log(res.user))
@@ -182,7 +182,7 @@ async function signup(userCred: SavedUser): Promise<SavedUser> {
 }
 
 async function logout() {
-	sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
+	// sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
 	await httpService.post('auth/logout')
 }
 
