@@ -71,7 +71,7 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] justify-between"
+                    className="w-[25.61rem] justify-between"
                 >
                     {newExercise.name || "Select exercise..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

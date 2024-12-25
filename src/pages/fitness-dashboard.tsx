@@ -71,7 +71,7 @@ export const FitnessDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100">Current Weight</p>
-                  <h3 className="text-3xl font-bold">{user?.weight[user.weight.length - 1].weight || '--'} kg</h3>
+                  <h3 className="text-3xl font-bold">{user?.weight[user.weight.length - 1]?.weight || '--'} kg </h3>
                 </div>
                 <Scale className="h-8 w-8 opacity-75" />
               </div>
