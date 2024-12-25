@@ -1,11 +1,45 @@
 import { ChevronRight, Dumbbell, Heart, Trophy, ArrowRight, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
-
+import { Link, Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { userService } from '@/services/user/user.service.remote';
+import { initUser } from '@/store/actions/user.actions';
 export const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isPublicRoute = location.pathname === '/' || location.pathname === '/auth';
+  const { data: user, isLoading } = userService.useAuthUser();
+
+  useEffect(() => {
+    if (isPublicRoute && user?.user) {
+      initUser(user.user);
+    }
+  }, [isPublicRoute, user]);
+
+  if (isPublicRoute && isLoading) {
+    return null;
+  }
+
+  if (isPublicRoute && user?.user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  // export const Home = () => {
+  //   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  //   const isPublicRoute = location.pathname === '/' || location.pathname === '/auth';
+
+  //   const { data: user, isLoading } = userService.useAuthUser();
+
+
+
+
+  //   if (isPublicRoute && isLoading) {
+  //     return null;
+  //   }
+
+  //   if (isPublicRoute && user?.user) {
+  //     initUser(user.user)
+  //     return <Navigate to="/dashboard" replace />;
+  //   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
