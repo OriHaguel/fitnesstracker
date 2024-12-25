@@ -80,8 +80,6 @@ function useAuthUser() {
 		refetchOnWindowFocus: false, // optional based on your needs
 	});
 }
-
-
 // getAuthUser().then(res => console.log(res.user))
 
 function remove(userId: string) {
@@ -94,8 +92,6 @@ async function update(_id: string, exercise: Exercise, method: 'put' | 'post') {
 	const user = await httpMethod(`users/${loggedinUser?._id}/workouts/${_id}/exercise`, exercise)
 
 	if (loggedinUser?._id === user._id) saveLoggedinUser(user)
-	console.log("🚀 ~ update ~ user:", user)
-
 	return user
 }
 
@@ -104,10 +100,9 @@ async function addWorkout(workout: Workout) {
 	const user = await httpService.post(`users/${loggedinUser?._id}/workout`, workout)
 
 	if (loggedinUser?._id === user._id) saveLoggedinUser(user)
-	console.log("🚀 ~ update ~ user:", user)
-
 	return user
 }
+
 async function deleteWorkoutById(workoutId: string) {
 	try {
 		const loggedinUser = getLoggedinUser()

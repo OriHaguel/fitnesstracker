@@ -1,4 +1,3 @@
-import * as React from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -16,6 +15,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { getExerciseByName } from "@/services/tracking progress/progress.service"
+import { useEffect, useState } from "react"
 
 interface ComboboxDemoProps {
     newExercise: {
@@ -35,8 +35,9 @@ interface ComboboxDemoProps {
 }
 
 export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps) {
-    const [open, setOpen] = React.useState(false)
-    const [exercises, setExercises] = React.useState<string[]>([])
+    const [open, setOpen] = useState(false)
+    const [exercises, setExercises] = useState<string[]>([])
+    const [searchValue, setSearchValue] = useState("")
 
     async function getExerciseNames(): Promise<string[] | undefined> {
         try {
@@ -44,11 +45,10 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
             return await getExerciseByName(newExercise?.muscleGroup)
         } catch (error) {
             console.log("🚀 ~ getExerciseNames ~ error:", error)
-
         }
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         async function loadExercises() {
             try {
                 if (!newExercise.muscleGroup) return
@@ -63,6 +63,14 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
 
         loadExercises()
     }, [newExercise.muscleGroup])
+
+    const handleSearchChange = (value: string) => {
+        setSearchValue(value)
+        setNewExercise(prev => ({
+            ...prev,
+            name: value
+        }))
+    }
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -79,7 +87,11 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
                 <Command>
-                    <CommandInput placeholder="Search exercise..." />
+                    <CommandInput
+                        placeholder="Search exercise..."
+                        value={searchValue}
+                        onValueChange={handleSearchChange}
+                    />
                     <CommandList>
                         <CommandEmpty>No exercise found.</CommandEmpty>
                         <CommandGroup>
@@ -92,6 +104,7 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                                             ...prev,
                                             name: currentValue === newExercise.name ? "" : currentValue
                                         }))
+                                        setSearchValue(currentValue === newExercise.name ? "" : currentValue)
                                         setOpen(false)
                                     }}
                                 >
@@ -113,4 +126,3 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
 }
 
 export default ComboboxDemo
-

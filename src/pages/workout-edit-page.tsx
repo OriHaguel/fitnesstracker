@@ -29,6 +29,7 @@ import { useSelector } from 'react-redux';
 import { Exercise as BaseExercise, Workout } from '../services/user/user.service.remote';
 import { editExercise, createWorkout, deleteExercise } from '@/store/actions/user.actions';
 import { ComboboxDemo } from '@/cmps/testData';
+import { DialogDescription } from '@radix-ui/react-dialog';
 interface Exercise extends BaseExercise {
   muscleGroup?: string;
 }
@@ -457,8 +458,8 @@ const WorkoutEditPage: React.FC = () => {
         </Card>
       </div>
 
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent>
+      {/* <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent aria-description='whatssssss'>
           <DialogHeader>
             <DialogTitle>Edit {editingExercise?.name}</DialogTitle>
           </DialogHeader>
@@ -507,8 +508,61 @@ const WorkoutEditPage: React.FC = () => {
             <Button onClick={handleEditSave}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit {editingExercise?.name}</DialogTitle>
+            <DialogDescription>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="sets" className="text-right">
+                Sets
+              </Label>
+              <Input
+                id="sets"
+                type="number"
+                value={editForm.sets}
+                onChange={(e) => setEditForm({ ...editForm, sets: +e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="reps" className="text-right">
+                Reps
+              </Label>
+              <Input
+                id="reps"
+                type="number"
+                value={editForm.reps}
+                onChange={(e) => setEditForm({ ...editForm, reps: +e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="weight" className="text-right">
+                Weight
+              </Label>
+              <Input
+                id="weight"
+                type="number"
+                value={editForm.weight}
+                onChange={(e) => setEditForm({ ...editForm, weight: +e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleEditSave}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
