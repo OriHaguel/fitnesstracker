@@ -43,7 +43,7 @@ const AuthPage = () => {
     ],
     signup: [
       { id: "signup-username", label: "Username", name: 'username', type: "text", placeholder: "Choose a username", icon: <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
-      { id: "signup-gmail", label: "gmail", name: 'gmail', type: "gmail", placeholder: "Enter your email", icon: <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
+      { id: "signup-gmail", label: "gmail", name: 'gmail', type: "email", placeholder: "Enter your email", icon: <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
       { id: "signup-password", label: "Password", name: 'password', type: "password", placeholder: "Create a password", icon: <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
     ],
   };

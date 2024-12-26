@@ -121,7 +121,7 @@ export const Home = () => {
                     size="lg"
                     className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-6 md:px-8 py-6 h-auto scale-100 hover:scale-105 w-full sm:w-auto"
                   >
-                    Download Now
+                    Start Now
                     <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </Button>
                 </Link>
@@ -130,7 +130,7 @@ export const Home = () => {
                   variant="outline"
                   className="border-2 border-white/50 bg-inherit hover:bg-white/20 shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-6 md:px-8 py-6 h-auto scale-100 hover:scale-105 w-full sm:w-auto"
                 >
-                  Learn More
+                  See demo data
                 </Button>
               </div>
             </div>
