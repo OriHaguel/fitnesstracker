@@ -69,7 +69,7 @@ export const WorkoutTrackingPage: React.FC = () => {
       setExercises(initialExercises);
 
       const initialInputValues: { [key: string]: string } = {};
-      initialExercises.forEach((exercise, exerciseIndex) => {
+      initialExercises.forEach((exercise) => {
         exercise.sets.forEach((set, setIndex) => {
           initialInputValues[`${exercise.name}-${setIndex}-weight`] = set.weight.toString();
           initialInputValues[`${exercise.name}-${setIndex}-reps`] = set.reps.toString();

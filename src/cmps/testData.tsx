@@ -68,7 +68,7 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
         setSearchValue(value)
         setNewExercise(prev => ({
             ...prev,
-            name: value
+            name: value.toLocaleLowerCase()
         }))
     }
 
@@ -102,7 +102,7 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                                     onSelect={(currentValue) => {
                                         setNewExercise(prev => ({
                                             ...prev,
-                                            name: currentValue === newExercise.name ? "" : currentValue
+                                            name: currentValue === newExercise.name ? "" : currentValue.toLocaleLowerCase()
                                         }))
                                         setSearchValue(currentValue === newExercise.name ? "" : currentValue)
                                         setOpen(false)
