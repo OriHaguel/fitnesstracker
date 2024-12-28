@@ -23,8 +23,6 @@ export function NavBar() {
         } catch (error) {
             console.log("🚀 ~ handleLogout ~ error:", error)
         }
-
-        console.log('Logout clicked');
     };
 
     return (

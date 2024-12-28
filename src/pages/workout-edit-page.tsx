@@ -155,7 +155,6 @@ const WorkoutEditPage: React.FC = () => {
       console.error("Error editing exercise:", error);
     }
   };
-  console.log(newExercise)
   const addExercise = async () => {
     if (Object.values(newExercise).every(value => value)) {
       if (id && id !== 'new') {
