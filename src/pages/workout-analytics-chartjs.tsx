@@ -303,11 +303,12 @@ const ExerciseProgressChart = ({ exercises }: { exercises: string[] }) => {
                 <SelectValue placeholder="Select an exercise" />
               </SelectTrigger>
               <SelectContent>
-                {exercises.map((exercise) => (
+                {[...new Set(exercises)].map((exercise) => (
                   <SelectItem key={exercise} value={exercise}>
                     {exercise}
                   </SelectItem>
                 ))}
+
               </SelectContent>
             </Select>
           </div>
