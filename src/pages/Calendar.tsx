@@ -9,9 +9,6 @@ import { Workout } from "@/services/user/user.service.remote"
 import { editWorkout } from "@/store/actions/user.actions"
 import { getStartDayOfMonth, isSameDay, isSameMonth, addDays, formatDate, WEEKDAYS } from "@/services/util.service"
 
-
-
-
 export default function Calendar() {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
@@ -87,9 +84,13 @@ export default function Calendar() {
             <DialogTitle>
               <div className={`${colors.color} text-white p-3 -m-6 mb-6 rounded-t-lg`}>
                 <h3 className="font-semibold text-lg">{workout.name}</h3>
-                <p className="text-sm text-white/90">
-                  {workout.date ? formatDate(new Date(workout.date), "EEEE, MMMM d, yyyy") : ""}
-                </p>
+                <div className="text-sm text-white/90">
+                  {workout.date?.map((date, index) => (
+                    <p key={index}>
+                      {date ? formatDate(new Date(date), "EEEE, MMMM d, yyyy") : ""}
+                    </p>
+                  ))}
+                </div>
               </div>
             </DialogTitle>
           </DialogHeader>
@@ -120,9 +121,6 @@ export default function Calendar() {
     )
   }
 
-
-
-
   const renderDays = () => {
     const days: JSX.Element[] = []
     const totalCells = 42
@@ -133,8 +131,11 @@ export default function Calendar() {
       const date = addDays(startDate, i - startDayOfWeek)
       const isCurrentMonth = isSameMonth(date, currentDate)
       const isToday = isSameDay(date, new Date())
+
       const dayWorkouts = user.workouts?.filter(workout =>
-        workout.date && isSameDay(new Date(workout.date), date)
+        workout.date?.some(workoutDate =>
+          workoutDate && isSameDay(new Date(workoutDate), date)
+        )
       )
 
       days.push(
@@ -241,7 +242,7 @@ export default function Calendar() {
                 variant="outline"
                 className="w-full justify-start text-left h-auto py-3"
                 onClick={() => {
-                  editWorkout(workout._id!, { date: selectedDate })
+                  editWorkout(workout._id!, { date: [...workout.date || [], selectedDate] })
                   setIsAddWorkoutModalOpen(false)
                 }}
               >

@@ -34,7 +34,7 @@ export interface Workout {
 	_id?: string
 	name: string
 	type: string
-	date?: Date
+	date?: Date[]
 	exercise: Exercise[]
 }
 export interface Weight {
