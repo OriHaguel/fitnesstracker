@@ -14,11 +14,12 @@ export default function Calendar() {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
-  console.log("🚀 ~ Calendar ~ selectedDate:", selectedDate)
   const [isAddWorkoutModalOpen, setIsAddWorkoutModalOpen] = useState(false)
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
   const [isEventModalOpen, setIsEventModalOpen] = useState(false)
+  const [dateForModal, setDateForModal] = useState<Date>();
 
+  console.log("🚀 ~ Calendar ~ selectedWorkout:", selectedWorkout)
   const handleDayClick = (date: Date, event?: React.MouseEvent) => {
     if (event) {
       event.stopPropagation()
@@ -40,13 +41,14 @@ export default function Calendar() {
     return colorMap[type.toLowerCase()] || colorMap.default
   }
 
-  const WorkoutCard = ({ workout }: { workout: Workout }) => {
+  const WorkoutCard = ({ date, workout }: { date: Date; workout: Workout }) => {
     const colors = getWorkoutColor(workout.type)
     return (
       <div
         onClick={(e) => {
           e.stopPropagation()
           setSelectedWorkout(workout)
+          setDateForModal(date)
           setIsEventModalOpen(true)
         }}
         className={`
@@ -79,6 +81,16 @@ export default function Calendar() {
     if (!workout) return null
 
     const colors = getWorkoutColor(workout.type)
+
+    function removeDate() {
+      if (workout?._id && dateForModal) {
+        deleteDate(workout._id, { date: dateForModal })
+        setDateForModal(undefined)
+        setIsEventModalOpen(false)
+        setSelectedWorkout(null)
+      }
+    }
+
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
@@ -95,8 +107,8 @@ export default function Calendar() {
               <TrashIcon className="h-4 w-4 mr-2" />
               Remove Date
             </Button> */}
-            {/* <StylishButton onClick={()=>deleteDate(workout._id,)}><TrashIcon className="h-4 w-4 mr-2" />Remove date</StylishButton> */}
-            {/* <StylishButton onClick={()=>deleteDate(workout._id,)}><TrashIcon className="h-4 w-4 mr-2" />Remove date</StylishButton> */}
+            <StylishButton onClick={removeDate}><TrashIcon className="h-4 w-4 mr-2" />Remove date</StylishButton>
+            {/* <StylishButton onClick={() => workout._id && dateForModal && deleteDate(workout._id, { date: dateForModal })}><TrashIcon className="h-4 w-4 mr-2" />Remove date</StylishButton> */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <h4 className="font-medium text-gray-700 mb-2">Workout Type</h4>
               <p className="text-gray-600">{workout.type}</p>
@@ -170,7 +182,7 @@ export default function Calendar() {
 
           <div className="px-1 overflow-y-auto max-h-14 md:max-h-20">
             {isCurrentMonth && dayWorkouts?.map(workout => (
-              <WorkoutCard key={workout._id} workout={workout} />
+              <WorkoutCard key={workout._id} workout={workout} date={date} />
             ))}
           </div>
         </div>
