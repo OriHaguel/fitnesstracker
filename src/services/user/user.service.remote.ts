@@ -21,7 +21,8 @@ export const userService = {
 	getAuthUser,
 	useAuthUser,
 	updateWeight,
-	removeDateFromWorkout
+	removeDateFromWorkout,
+	getWorkoutsThisWeek
 }
 
 export interface Exercise {
@@ -202,6 +203,32 @@ async function removeDateFromWorkout(workoutId: string, dateToDelete: { date: Da
 }
 // removeDateFromWorkout('605c72ef1532071f8b3f1a2f', { date: new Date('2024-12-30T22:00:00.000+00:00') })
 // console.log('yoooo')
+
+export function getWorkoutsThisWeek(user: SavedUser): number {
+	const now = new Date();
+	const startOfWeek = new Date(now);
+	const endOfWeek = new Date(now);
+
+	// Calculate the start and end dates of the current week (Sunday to Saturday)
+	startOfWeek.setDate(now.getDate() - now.getDay()); // Set to Sunday
+	startOfWeek.setHours(0, 0, 0, 0); // Start of the day
+
+	endOfWeek.setDate(now.getDate() + (6 - now.getDay())); // Set to Saturday
+	endOfWeek.setHours(23, 59, 59, 999); // End of the day
+
+	// Count occurrences of workout dates within this week
+	let count = 0;
+	user.workouts.forEach(workout => {
+		if (workout.date) {
+			count += workout.date.filter(workoutDate => {
+				const workoutTime = new Date(workoutDate).getTime();
+				return workoutTime >= startOfWeek.getTime() && workoutTime <= endOfWeek.getTime();
+			}).length;
+		}
+	});
+
+	return count;
+}
 
 
 

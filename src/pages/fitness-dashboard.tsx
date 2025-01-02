@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useSelector } from 'react-redux';
-import { SavedUser, Workout } from '@/services/user/user.service.remote';
+import { SavedUser, userService, Workout } from '@/services/user/user.service.remote';
 import { addWeight } from '@/store/actions/user.actions';
 import { Link } from 'react-router-dom';
 import { isSameDate } from '@/services/util.service';
@@ -82,7 +82,7 @@ export const FitnessDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-100">Weekly Workouts</p>
-                  <h3 className="text-3xl font-bold">4/5</h3>
+                  <h3 className="text-3xl font-bold">{userService.getWorkoutsThisWeek(user)}</h3>
                 </div>
                 <TrendingUp className="h-8 w-8 opacity-75" />
               </div>
@@ -126,7 +126,7 @@ export const FitnessDashboard = () => {
             <CardContent>
               <div className="bg-gray-50 p-4 rounded-lg mb-4">
                 <h4 className="font-semibold mb-2">{currentWorkout?.name}</h4>
-                <p className="text-sm text-gray-600"> {currentWorkout?.exercise.length} exercises</p>
+                <p className="text-sm text-gray-600"> {currentWorkout?.exercise && `${currentWorkout?.exercise.length} exercises` || 'No workouts here! Add your first one and crush your fitness goals!'} </p>
               </div>
               <Link to={'/today'}>
                 <Button className="w-full bg-blue-600 hover:bg-blue-700">

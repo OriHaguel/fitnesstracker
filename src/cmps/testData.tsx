@@ -35,9 +35,9 @@ interface ComboboxDemoProps {
 }
 
 export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps) {
+    // console.log("🚀 ~ ComboboxDemo ~ newExercise:", newExercise)
     const [open, setOpen] = useState(false)
     const [exercises, setExercises] = useState<string[]>([])
-    const [searchValue, setSearchValue] = useState("")
 
     async function getExerciseNames(): Promise<string[] | undefined> {
         try {
@@ -65,7 +65,6 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
     }, [newExercise.muscleGroup])
 
     const handleSearchChange = (value: string) => {
-        setSearchValue(value)
         setNewExercise(prev => ({
             ...prev,
             name: value.toLocaleLowerCase()
@@ -89,7 +88,7 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                 <Command>
                     <CommandInput
                         placeholder="Search exercise..."
-                        value={searchValue}
+                        value={newExercise.name}
                         onValueChange={handleSearchChange}
                     />
                     <CommandList>
@@ -104,7 +103,6 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                                             ...prev,
                                             name: currentValue === newExercise.name ? "" : currentValue.toLocaleLowerCase()
                                         }))
-                                        setSearchValue(currentValue === newExercise.name ? "" : currentValue)
                                         setOpen(false)
                                     }}
                                 >

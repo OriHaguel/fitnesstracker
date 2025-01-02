@@ -127,7 +127,7 @@ export const WorkoutTrackingPage: React.FC = () => {
 
   if (!currentWorkout) {
     return (
-      <div className="container mx-auto p-4 max-w-3xl">
+      <div className="container mx-auto p-4 max-w-3xl h-screen">
         <Card className="bg-gray-50">
           <CardContent className="flex flex-col items-center justify-center p-12">
             <Dumbbell className="w-12 h-12 text-blue-500 mb-4" />
@@ -161,7 +161,7 @@ export const WorkoutTrackingPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-3xl">
+    <div className="container mx-auto p-4 max-w-3xl h-screen">
       <Card className="bg-white shadow-sm mb-6">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-2">
