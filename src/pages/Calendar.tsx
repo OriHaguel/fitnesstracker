@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Trash2, TrashIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -6,13 +6,15 @@ import { useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "./workout-edit-page"
 import { Workout } from "@/services/user/user.service.remote"
-import { editWorkout } from "@/store/actions/user.actions"
+import { deleteDate, editWorkout } from "@/store/actions/user.actions"
 import { getStartDayOfMonth, isSameDay, isSameMonth, addDays, formatDate, WEEKDAYS } from "@/services/util.service"
+import { StylishButton } from "@/components/ui/stylish-button"
 
 export default function Calendar() {
   const user = useSelector((state: RootState) => state.userModule.user);
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  console.log("🚀 ~ Calendar ~ selectedDate:", selectedDate)
   const [isAddWorkoutModalOpen, setIsAddWorkoutModalOpen] = useState(false)
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
   const [isEventModalOpen, setIsEventModalOpen] = useState(false)
@@ -30,7 +32,7 @@ export default function Calendar() {
 
   const getWorkoutColor = (type: string): { color: string, borderColor: string } => {
     const colorMap: Record<string, { color: string, borderColor: string }> = {
-      strength: { color: "bg-purple-500/90", borderColor: "border-purple-600" },
+      strength: { color: "bg-gradient-to-r from-blue-500 to-indigo-500", borderColor: "bg-gradient-to-r from-blue-500 to-indigo-500" },
       cardio: { color: "bg-red-500/90", borderColor: "border-red-600" },
       flexibility: { color: "bg-blue-500/90", borderColor: "border-blue-600" },
       default: { color: "bg-gray-500/90", borderColor: "border-gray-600" }
@@ -82,31 +84,31 @@ export default function Calendar() {
         <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>
-              <div className={`${colors.color} text-white p-3 -m-6 mb-6 rounded-t-lg`}>
-                <h3 className="font-semibold text-lg">{workout.name}</h3>
-                <div className="text-sm text-white/90">
-                  {workout.date?.map((date, index) => (
-                    <p key={index}>
-                      {date ? formatDate(new Date(date), "EEEE, MMMM d, yyyy") : ""}
-                    </p>
-                  ))}
-                </div>
+              <div className={`${colors.color} text-white p-4 -m-6 mb-6 rounded-t-lg flex justify-between items-center shadow-sm`}>
+                <h3 className="font-semibold text-xl">{workout.name}</h3>
+                {/* <h3 className="font-semibold text-xl">{workout._id}</h3> */}
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
+          <div className="space-y-6 px-1">
+            {/* <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+              <TrashIcon className="h-4 w-4 mr-2" />
+              Remove Date
+            </Button> */}
+            {/* <StylishButton onClick={()=>deleteDate(workout._id,)}><TrashIcon className="h-4 w-4 mr-2" />Remove date</StylishButton> */}
+            {/* <StylishButton onClick={()=>deleteDate(workout._id,)}><TrashIcon className="h-4 w-4 mr-2" />Remove date</StylishButton> */}
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h4 className="font-medium text-gray-700 mb-2">Workout Type</h4>
               <p className="text-gray-600">{workout.type}</p>
             </div>
-            <div>
-              <h4 className="font-medium text-gray-700 mb-2">Exercises</h4>
-              <div className="space-y-2">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-medium text-gray-700 mb-3">Exercises</h4>
+              <div className="space-y-4">
                 {workout.exercise.map((exercise, index) => (
-                  <div key={index} className="text-gray-600">
+                  <div key={index} className="text-gray-600 border-l-2 border-gray-200 pl-3">
                     <p className="font-medium">{exercise.name}</p>
                     {exercise.sets && exercise.reps && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 mt-1">
                         {exercise.sets} sets × {exercise.reps} reps
                         {exercise.weight && ` @ ${exercise.weight}lbs`}
                       </p>

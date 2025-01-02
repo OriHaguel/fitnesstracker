@@ -20,7 +20,8 @@ export const userService = {
 	deleteExerciseById,
 	getAuthUser,
 	useAuthUser,
-	updateWeight
+	updateWeight,
+	removeDateFromWorkout
 }
 
 export interface Exercise {
@@ -185,6 +186,24 @@ async function logout() {
 	// sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
 	await httpService.post('auth/logout')
 }
+
+
+async function removeDateFromWorkout(workoutId: string, dateToDelete: { date: Date }) {
+	try {
+		const loggedinUser = getLoggedinUser()
+		const user = await httpService.delete(`users/${loggedinUser?._id}/${workoutId}/date`, dateToDelete)
+		if (loggedinUser?._id === user._id) saveLoggedinUser(user)
+
+		return user
+	} catch (error) {
+		console.log("🚀 ~ deleteWorkout ~ error:", error)
+
+	}
+}
+// removeDateFromWorkout('605c72ef1532071f8b3f1a2f', { date: new Date('2024-12-30T22:00:00.000+00:00') })
+// console.log('yoooo')
+
+
 
 function getLoggedinUser(): SavedUser | null {
 	try {

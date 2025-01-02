@@ -20,7 +20,7 @@ export const FitnessDashboard = () => {
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   useEffect(() => {
     const todaysWorkout = user?.workouts?.find(workout =>
-      workout.date && isSameDate(new Date(workout.date))
+      workout.date && workout.date.some(workoutDate => workoutDate && isSameDate(new Date(workoutDate)))
     );
     setCurrentWorkout(todaysWorkout || null);
   }, [user?.workouts]);

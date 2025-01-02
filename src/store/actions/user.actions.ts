@@ -119,4 +119,12 @@ export async function addWeight(weight: { weight: number }) {
         console.log('Cannot load user', err)
     }
 }
+export async function deleteDate(workoutId: string, dateToDelete: { date: Date }) {
+    try {
+        const user = await userService.removeDateFromWorkout(workoutId, dateToDelete)
+        store.dispatch({ type: SET_USER, user })
+    } catch (err) {
+        console.log('Cannot load user', err)
+    }
+}
 
