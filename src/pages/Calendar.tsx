@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Trash2, TrashIcon } from "lucide-react"
+import { ChevronLeft, ChevronRight, TrashIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -98,17 +98,12 @@ export default function Calendar() {
             <DialogTitle>
               <div className={`${colors.color} text-white p-4 -m-6 mb-6 rounded-t-lg flex justify-between items-center shadow-sm`}>
                 <h3 className="font-semibold text-xl">{workout.name}</h3>
-                {/* <h3 className="font-semibold text-xl">{workout._id}</h3> */}
+                <h3 className="font-semibold text-xl">{dateForModal?.toDateString()}</h3>
               </div>
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6 px-1">
-            {/* <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50">
-              <TrashIcon className="h-4 w-4 mr-2" />
-              Remove Date
-            </Button> */}
             <StylishButton onClick={removeDate}><TrashIcon className="h-4 w-4 mr-2" />Remove date</StylishButton>
-            {/* <StylishButton onClick={() => workout._id && dateForModal && deleteDate(workout._id, { date: dateForModal })}><TrashIcon className="h-4 w-4 mr-2" />Remove date</StylishButton> */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <h4 className="font-medium text-gray-700 mb-2">Workout Type</h4>
               <p className="text-gray-600">{workout.type}</p>
