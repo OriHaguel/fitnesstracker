@@ -1,10 +1,4 @@
-// REM Functions
-// @function rem($size) {
-//     $remSize: calc($size / 16px);
-//     @return calc($remSize * 1rem);
-// }
 @function rem($size, $base: 16px) {
-    // Ensure both values have the same unit type
     $remSize: $size / $base; // This works because both are in pixels
     @return #{$remSize}rem; // Return the value in rem
 }

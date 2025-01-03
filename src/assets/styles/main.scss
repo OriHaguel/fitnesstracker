@@ -4,7 +4,6 @@
 @use "setup/variables";
 @use "setup/functions";
 @use "setup/mixins";
-@use "setup/typography";
 
 
 @use "basics/helpers";
@@ -79,13 +78,3 @@
     --chart-5: 340 75% 55%
   }
 }
-
-// @layer base {
-//   * {
-//     @apply border-border;
-//   }
-
-//   body {
-//     @apply text-foreground;
-//   }
-// }

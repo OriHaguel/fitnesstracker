@@ -40,10 +40,6 @@ export function useGetAllSetsById(exerciseId: string) {
         enabled: !!exerciseId,
     });
 }
-// console.log("🚀 ~ StatsPage ~   useGetAllSetsById('Dumbbell Bench Press').data:", useGetAllSetsById('Dumbbell Bench Press').data)
-
-// getAllSetsById('Dumbbell Bench Press').then(res => console.log(res))
-
 export function getMaxSet(data: { sets: SetsAndWeights[] }): SetsAndWeights {
     const { sets } = data;
 

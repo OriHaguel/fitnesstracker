@@ -10,7 +10,6 @@ export const Home = () => {
   const isPublicRoute = location.pathname === '/' || location.pathname === '/auth';
   const { data: user, isLoading } = userService.useAuthUser();
 
-
   useEffect(() => {
     if (isPublicRoute && user?.user) {
       initUser(user.user);
@@ -25,23 +24,6 @@ export const Home = () => {
   if (isPublicRoute && user?.user) {
     return <Navigate to="/dashboard" replace />;
   }
-  // export const Home = () => {
-  //   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  //   const isPublicRoute = location.pathname === '/' || location.pathname === '/auth';
-
-  //   const { data: user, isLoading } = userService.useAuthUser();
-
-
-
-
-  //   if (isPublicRoute && isLoading) {
-  //     return null;
-  //   }
-
-  //   if (isPublicRoute && user?.user) {
-  //     initUser(user.user)
-  //     return <Navigate to="/dashboard" replace />;
-  //   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">

@@ -77,12 +77,8 @@ function useAuthUser() {
 	return useQuery({
 		queryKey: ['authUser'],
 		queryFn: getAuthUser,
-		// staleTime: 1000 * 60 * 5, // 5 minutes
-		// gcTime: 1000 * 60, // 10 minutes
-		// refetchOnWindowFocus: false, // optional based on your needs
 	});
 }
-// getAuthUser().then(res => console.log(res.user))
 
 function remove(userId: string) {
 	return httpService.delete(`users/${userId}`)
@@ -153,7 +149,6 @@ async function updateWeight(updateData: { weight: number }) {
 
 	}
 }
-// updateWeight({ weight: 65 })
 
 async function login(credentials: SavedUser): Promise<SavedUser> {
 	try {
@@ -209,14 +204,12 @@ export function getWorkoutsThisWeek(user: SavedUser): number {
 	const startOfWeek = new Date(now);
 	const endOfWeek = new Date(now);
 
-	// Calculate the start and end dates of the current week (Sunday to Saturday)
 	startOfWeek.setDate(now.getDate() - now.getDay()); // Set to Sunday
 	startOfWeek.setHours(0, 0, 0, 0); // Start of the day
 
-	endOfWeek.setDate(now.getDate() + (6 - now.getDay())); // Set to Saturday
-	endOfWeek.setHours(23, 59, 59, 999); // End of the day
+	endOfWeek.setDate(now.getDate() + (6 - now.getDay()));
+	endOfWeek.setHours(23, 59, 59, 999);
 
-	// Count occurrences of workout dates within this week
 	let count = 0;
 	user.workouts.forEach(workout => {
 		if (workout.date) {

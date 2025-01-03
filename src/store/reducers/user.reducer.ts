@@ -7,9 +7,6 @@ export const SET_USER = 'SET_USER' as const;
 export const SET_WATCHED_USER = 'SET_WATCHED_USER' as const;
 export const SET_USERS = 'SET_USERS' as const;
 
-// Define the User interface (update properties as per your actual user structure)
-
-
 // State Type
 interface UserState {
     user: SavedUser | null;

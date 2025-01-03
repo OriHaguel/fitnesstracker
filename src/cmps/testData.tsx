@@ -35,7 +35,6 @@ interface ComboboxDemoProps {
 }
 
 export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps) {
-    // console.log("🚀 ~ ComboboxDemo ~ newExercise:", newExercise)
     const [open, setOpen] = useState(false)
     const [exercises, setExercises] = useState<string[]>([])
 

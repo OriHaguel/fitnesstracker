@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './store/store'
-// import * as serviceWorkerRegistration from ''
 
 import './assets/styles/main.scss'
 import { RootCmp } from './RootCmp'
@@ -22,4 +21,3 @@ createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </StrictMode>,
 )
-// serviceWorkerRegistration.register()
