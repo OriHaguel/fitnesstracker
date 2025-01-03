@@ -16,7 +16,7 @@ export function RootCmp() {
 
 
     return (
-        <div className="main-container bg-gradient-to-br from-blue-50">
+        <div className={`bg-gradient-to-br ${showNavbar && 'main-container'} from-blue-50`}>
             {showNavbar && <NavBar />}
             <main>
                 <Routes>
