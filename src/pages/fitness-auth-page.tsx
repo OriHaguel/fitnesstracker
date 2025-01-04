@@ -43,7 +43,7 @@ const AuthPage = () => {
     ],
     signup: [
       { id: "signup-username", label: "Username", name: 'username', type: "text", placeholder: "Choose a username", icon: <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
-      { id: "signup-gmail", label: "gmail", name: 'gmail', type: "email", placeholder: "Enter your email", icon: <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
+      { id: "signup-gmail", label: "gmail (You don't need a real Gmail)", name: 'gmail', type: "email", placeholder: "Enter your email", icon: <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
       { id: "signup-password", label: "Password", name: 'password', type: "password", placeholder: "Create a password", icon: <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" /> },
     ],
   };
@@ -84,7 +84,7 @@ const AuthPage = () => {
         <div className="flex justify-between items-center">
           <div className="text-4xl font-bold tracking-tight flex items-center text-blue-600">
             <Dumbbell className="mr-2 h-8 w-8" />
-            FitLife
+            FitTrack
           </div>
         </div>
       </nav>
@@ -93,7 +93,7 @@ const AuthPage = () => {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <Card className="w-full max-w-md shadow-2xl border-0">
           <CardHeader className="text-center pb-2">
-            <CardTitle className="text-2xl font-bold">Welcome to FitLife</CardTitle>
+            <CardTitle className="text-2xl font-bold">Welcome to FitTrack</CardTitle>
           </CardHeader>
 
           <CardContent>

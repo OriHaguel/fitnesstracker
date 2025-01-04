@@ -37,7 +37,7 @@ export const Home = () => {
             {/* Logo */}
             <div className="text-2xl md:text-4xl font-bold tracking-tight flex items-center">
               <Dumbbell className="mr-2 h-6 w-6 md:h-8 md:w-8" />
-              FitLife
+              FitTrack
             </div>
 
             {/* Desktop Navigation */}
@@ -123,7 +123,7 @@ export const Home = () => {
       {/* Features Section */}
       <section className="py-16 md:py-32 container mx-auto px-4 md:px-6 bg-gradient-to-b from-white to-blue-50">
         <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-12 md:mb-24 text-gray-900">
-          Why Choose <span className="text-blue-600">FitLife</span>?
+          Why Choose <span className="text-blue-600">FitTrack</span>?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12">
           {[
@@ -161,7 +161,7 @@ export const Home = () => {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDIwIDAgTCAwIDAgMCAyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30 animate-pulse"></div>
         <div className="container mx-auto px-4 md:px-6 text-center relative">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 leading-tight">Start Your Journey Today</h2>
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-8 md:mb-12 max-w-2xl mx-auto text-blue-100 px-4">Join thousands of users who have transformed their lives with FitLife</p>
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-8 md:mb-12 max-w-2xl mx-auto text-blue-100 px-4">Join thousands of users who have transformed their lives with FitTrack</p>
           <Link to={'/auth'}>
             <Button
               size="lg"
