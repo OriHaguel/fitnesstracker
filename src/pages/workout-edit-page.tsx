@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Trash2, Edit2, Calculator, ArrowRight, Save } from 'lucide-react';
+import { ArrowLeft, Trash2, Edit2, Calculator, ArrowRight, Save, Divide } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -30,6 +30,8 @@ import { Exercise as BaseExercise, Workout } from '../services/user/user.service
 import { editExercise, createWorkout, deleteExercise } from '@/store/actions/user.actions';
 import { ComboboxDemo } from '@/cmps/testData';
 import { DialogDescription } from '@radix-ui/react-dialog';
+import WorkoutCard from '@/cmps/workout-card';
+
 interface Exercise extends BaseExercise {
   muscleGroup?: string;
 }
@@ -78,6 +80,7 @@ const WorkoutEditPage: React.FC = () => {
     type: '',
     exercise: []
   });
+  console.log("🚀 ~ workout:", workout)
 
   const [newExercise, setNewExercise] = useState<Exercise>({
     name: '',
@@ -232,7 +235,7 @@ const WorkoutEditPage: React.FC = () => {
         </h1>
       </div>
 
-      <WorkoutDetail workout={workout} setWorkout={setWorkout} />
+      {workout.name && workout.type ? <WorkoutCard name={workout.name} type={workout.type} /> : <WorkoutDetail workout={workout} setWorkout={setWorkout} />}
 
       <div className="mb-6">
         <h2 className="text-xl font-bold mb-4">Exercises</h2>
@@ -305,6 +308,7 @@ const WorkoutEditPage: React.FC = () => {
                         ...newExercise,
                         sets: parseInt(e.target.value) || 0
                       })}
+                      max={10}
                       className="w-1/3"
                     />
                     <Input

@@ -127,6 +127,7 @@ const WeightTracker = ({ weightData }: { weightData: Weight[] }) => {
       }
     }
   };
+  console.log("🚀 ~ WeightTracker ~ weightDiff:", weightDiff)
 
   return (
     <Card className="w-full">
@@ -172,7 +173,7 @@ const WeightTracker = ({ weightData }: { weightData: Weight[] }) => {
                 <div className="text-2xl font-semibold text-slate-900">{previousWeight} kg</div>
               </div>
             )}
-            {weightDiff !== 0 && (
+            {weightDiff !== 0 && !isNaN(weightDiff) && (
               <div className="bg-white p-4 rounded-lg border">
                 <div className="text-sm font-medium text-slate-500">Change</div>
                 <div className={`text-2xl font-semibold ${weightTrend === 'increase' ? 'text-red-600' :

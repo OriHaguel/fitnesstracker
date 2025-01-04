@@ -8,12 +8,16 @@ import Home from './pages/Home'
 import { WorkoutTrackingPage } from './pages/workout-tracking-page'
 import { StatsPage } from './pages/workout-analytics-chartjs'
 import { FitnessDashboard } from './pages/fitness-dashboard'
+import { useEffect } from 'react'
 
 
 export function RootCmp() {
     const location = useLocation();
     const showNavbar = location.pathname !== '/' && location.pathname !== '/auth';
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location.pathname]);
 
     return (
         <div className={`bg-gradient-to-br ${showNavbar && 'main-container'} from-blue-50`}>
