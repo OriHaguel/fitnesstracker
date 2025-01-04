@@ -77,19 +77,24 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[25.61rem] justify-between"
+                    className="w-[200px] justify-between"
                 >
-                    {newExercise.name || "Select exercise..."}
+                    <span className="truncate flex-1 text-left">
+                        {newExercise.name || "Select exercise..."}
+                    </span>
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
                 <Command>
-                    <CommandInput
-                        placeholder="Search exercise..."
-                        value={newExercise.name}
-                        onValueChange={handleSearchChange}
-                    />
+                    <div className="flex w-full items-center border-b">
+                        <CommandInput
+                            className="flex-1"
+                            placeholder="Search exercise..."
+                            value={newExercise.name}
+                            onValueChange={handleSearchChange}
+                        />
+                    </div>
                     <CommandList>
                         <CommandEmpty>No exercise found.</CommandEmpty>
                         <CommandGroup>
@@ -97,6 +102,7 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                                 <CommandItem
                                     key={`${exercise}-${index}`}
                                     value={exercise}
+                                    className="flex items-center"
                                     onSelect={(currentValue) => {
                                         setNewExercise(prev => ({
                                             ...prev,
@@ -107,11 +113,11 @@ export function ComboboxDemo({ newExercise, setNewExercise }: ComboboxDemoProps)
                                 >
                                     <Check
                                         className={cn(
-                                            "mr-2 h-4 w-4",
+                                            "mr-2 h-4 w-4 shrink-0",
                                             newExercise.name === exercise ? "opacity-100" : "opacity-0"
                                         )}
                                     />
-                                    {exercise}
+                                    <span>{exercise}</span>
                                 </CommandItem>
                             ))}
                         </CommandGroup>
