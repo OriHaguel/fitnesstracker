@@ -19,7 +19,6 @@ export default function Calendar() {
   const [isEventModalOpen, setIsEventModalOpen] = useState(false)
   const [dateForModal, setDateForModal] = useState<Date>();
 
-  console.log("🚀 ~ Calendar ~ selectedWorkout:", selectedWorkout)
   const handleDayClick = (date: Date, event?: React.MouseEvent) => {
     if (event) {
       event.stopPropagation()
@@ -110,7 +109,7 @@ export default function Calendar() {
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <h4 className="font-medium text-gray-700 mb-3">Exercises</h4>
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-64 overflow-y-auto"> {/* Added container for scrolling */}
                 {workout.exercise.map((exercise, index) => (
                   <div key={index} className="text-gray-600 border-l-2 border-gray-200 pl-3">
                     <p className="font-medium">{exercise.name}</p>
@@ -129,6 +128,7 @@ export default function Calendar() {
       </Dialog>
     )
   }
+
 
   const renderDays = () => {
     const days: JSX.Element[] = []
@@ -188,7 +188,7 @@ export default function Calendar() {
 
   return (
     <>
-      <Card className="w-full max-w-[960px] mx-auto p-2 md:p-6 shadow-lg">
+      <Card className="w-full mx-auto h-[100vh] p-2 md:p-6 shadow-lg">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
           <div className="flex items-center justify-between md:justify-start gap-4">
             <h2 className="text-xl md:text-2xl font-bold tracking-tight">

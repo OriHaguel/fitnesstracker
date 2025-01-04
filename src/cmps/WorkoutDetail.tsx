@@ -29,6 +29,7 @@ export function WorkoutDetail({ workout, setWorkout }: WorkoutDetailProps) {
                 <input
                     type="text"
                     placeholder="Workout Name"
+                    maxLength={22}
                     className="w-full p-2 border rounded"
                     value={workout.name}
                     onChange={(e) => setWorkout({
