@@ -1,21 +1,27 @@
 import { ChevronRight, Dumbbell, Heart, Trophy, ArrowRight, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { userService } from '@/services/user/user.service.remote';
-import { initUser } from '@/store/actions/user.actions';
+import { initUser, login } from '@/store/actions/user.actions';
 export const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isPublicRoute = location.pathname === '/' || location.pathname === '/auth';
   const { data: user, isLoading } = userService.useAuthUser();
-
+  const navigate = useNavigate()
   useEffect(() => {
     if (isPublicRoute && user?.user) {
       initUser(user.user);
     }
 
   }, [isPublicRoute, user]);
+
+  async function handleDemoUserLogin() {
+    await login({ username: '', gmail: 'demo@user', password: '123', weight: [], workouts: [] })
+    navigate('/dashboard')
+  }
+
 
   if (isPublicRoute && isLoading) {
     return null;
@@ -42,8 +48,6 @@ export const Home = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
-              <Button variant="ghost" className="text-white hover:bg-white/20">Features</Button>
-              <Button variant="ghost" className="text-white hover:bg-white/20">Pricing</Button>
               <Link to={'/auth'}>
                 <Button variant="secondary" className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300 scale-100 hover:scale-105">
                   Get Started
@@ -111,6 +115,7 @@ export const Home = () => {
                   size="lg"
                   variant="outline"
                   className="border-2 border-white/50 bg-inherit hover:bg-white/20 shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-6 md:px-8 py-6 h-auto scale-100 hover:scale-105 w-full sm:w-auto"
+                  onClick={handleDemoUserLogin}
                 >
                   See demo data
                 </Button>
