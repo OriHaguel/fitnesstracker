@@ -247,7 +247,7 @@ const WorkoutEditPage: React.FC = () => {
         </h1>
       </div>
 
-      {workout.name && workout.type ? <WorkoutCard name={workout.name} type={workout.type} /> : <WorkoutDetail workout={workout} setWorkout={setWorkout} />}
+      {id && workout.name && workout.type ? <WorkoutCard name={workout.name} type={workout.type} /> : <WorkoutDetail workout={workout} setWorkout={setWorkout} />}
 
       <div className="mb-6">
         <h2 className="text-xl font-bold mb-4">Exercises</h2>
