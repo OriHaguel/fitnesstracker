@@ -127,7 +127,6 @@ const WeightTracker = ({ weightData }: { weightData: Weight[] }) => {
       }
     }
   };
-  console.log("🚀 ~ WeightTracker ~ weightDiff:", weightDiff)
 
   return (
     <Card className="w-full">

@@ -31,7 +31,7 @@ import { editExercise, createWorkout, deleteExercise } from '@/store/actions/use
 import { ComboboxDemo } from '@/cmps/testData';
 import { DialogDescription } from '@radix-ui/react-dialog';
 import WorkoutCard from '@/cmps/workout-card';
-
+import { toast } from 'react-toastify';
 interface Exercise extends BaseExercise {
   muscleGroup?: string;
 }
@@ -71,6 +71,7 @@ const WorkoutEditPage: React.FC = () => {
     "middle_back",
     "neck",
     "quadriceps",
+    "shoulders",
     "traps",
     "triceps"
   ];
@@ -80,6 +81,7 @@ const WorkoutEditPage: React.FC = () => {
     type: '',
     exercise: []
   });
+
   console.log("🚀 ~ workout:", workout)
 
   const [newExercise, setNewExercise] = useState<Exercise>({
@@ -119,6 +121,14 @@ const WorkoutEditPage: React.FC = () => {
 
   const handleSave = async () => {
     try {
+      if (!workout.name) {
+        toast.error('Please add a workout name');
+        return;
+      } else if (!workout.type) {
+        toast.error('Please add a workout type');
+        return;
+      }
+
       if (!id || id === 'new') {
         await createWorkout(workout);
       }
@@ -175,6 +185,8 @@ const WorkoutEditPage: React.FC = () => {
         weight: 0,
         muscleGroup: ''
       });
+    } else {
+      toast.error('Please fill in all exercise fields');
     }
   };
 

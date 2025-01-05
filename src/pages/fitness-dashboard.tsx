@@ -64,6 +64,7 @@ export const FitnessDashboard = () => {
                 className="text-gray-600 hover:text-gray-900"
                 onClick={handleLogout}
               >
+                {/* logout */}
                 <LogOut className="h-5 w-5" />
               </Button>
             </div>
