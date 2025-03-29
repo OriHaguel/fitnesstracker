@@ -47,16 +47,16 @@ export const Home = () => {
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-6">
+            {/* <div className="hidden md:flex items-center space-x-6">
               <Link to={'/auth'}>
                 <Button variant="secondary" className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300 scale-100 hover:scale-105">
                   Get Started
                 </Button>
               </Link>
-            </div>
+            </div> */}
 
             {/* Mobile Navigation */}
-            <div className="flex items-center gap-4 md:hidden">
+            {/* <div className="flex items-center gap-4 md:hidden">
               <Link to={'/auth'}>
                 <Button variant="secondary" className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300 scale-100 hover:scale-105">
                   Get Started
@@ -70,7 +70,7 @@ export const Home = () => {
               >
                 {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {/* Mobile Menu */}
@@ -107,7 +107,7 @@ export const Home = () => {
                     size="lg"
                     className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-6 md:px-8 py-6 h-auto scale-100 hover:scale-105 w-full sm:w-auto"
                   >
-                    Start Now
+                    Signup
                     <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </Button>
                 </Link>
@@ -117,7 +117,7 @@ export const Home = () => {
                   className="border-2 border-white/50 bg-inherit hover:bg-white/20 shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-6 md:px-8 py-6 h-auto scale-100 hover:scale-105 w-full sm:w-auto"
                   onClick={handleDemoUserLogin}
                 >
-                  See demo data
+                  Start as a guest
                 </Button>
               </div>
             </div>
@@ -172,7 +172,7 @@ export const Home = () => {
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 text-lg md:text-xl px-8 md:px-12 py-6 md:py-8 h-auto scale-100 hover:scale-105 w-full sm:w-auto"
             >
-              Download Now
+              Signup Now
               <ArrowRight className="ml-2 h-5 w-5 md:h-6 md:w-6 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
           </Link>

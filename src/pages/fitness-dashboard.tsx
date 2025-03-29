@@ -20,6 +20,7 @@ export const FitnessDashboard = () => {
   const [weight, setWeight] = useState('');
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const navigate = useNavigate()
+
   useEffect(() => {
     const todaysWorkout = user?.workouts?.find(workout =>
       workout.date && workout.date.some(workoutDate => workoutDate && isSameDate(new Date(workoutDate)))
@@ -48,7 +49,7 @@ export const FitnessDashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* Top Navigation Bar */}
       <nav className="bg-white shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4">
+        <div className="max-w-6xl mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="bg-indigo-600 p-2 rounded-lg">
