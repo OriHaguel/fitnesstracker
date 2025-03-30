@@ -29,7 +29,7 @@ const WorkoutListPage = () => {
               <p className="text-gray-500 mt-1">Track and manage your fitness journey</p>
             </div>
             <Button
-              className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 shadow-sm flex items-center justify-center gap-2 px-6 py-5"
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 shadow-sm flex items-center justify-center gap-2 px-6 py-5"
               onClick={() => navigate('/workouts/new')}
             >
               <Plus size={18} />

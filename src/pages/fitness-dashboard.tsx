@@ -129,7 +129,7 @@ export const FitnessDashboard = () => {
                 onChange={(e) => setWeight(e.target.value)}
                 className="max-w-[200px]"
               />
-              <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">Log Weight</Button>
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Log Weight</Button>
             </form>
           </CardContent>
         </Card>

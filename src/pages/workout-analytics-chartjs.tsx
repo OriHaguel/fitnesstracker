@@ -154,7 +154,7 @@ const WeightTracker = ({ weightData }: { weightData: Weight[] }) => {
                 className="h-10"
               />
             </div>
-            <Button type="submit" className="h-10">
+            <Button type="submit" className="h-10 bg-blue-600 hover:bg-blue-700">
               Add Weight
             </Button>
           </form>
